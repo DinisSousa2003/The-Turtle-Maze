@@ -30,7 +30,7 @@ test_rect = pygame.Rect(100, 100, 100, 50) #coordinates and size
 turtle_img = pygame.image.load("Turtle.jpg").convert() #turtle
 pygame.mouse.set_visible(0) #mouse not visible
 
-#Player rect to implement collisions; appears first of screen
+#Player rect to implement collisions; arbitrary coordinates
 turtle_rect = pygame.Rect(30, 30, turtle_img.get_width(), turtle_img.get_height())
 
 run = True
