@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Dec 11 09:06:32 2020
-
-@author: up202006303
-"""
-
 #setup of the general game basis, import image and sounds, create maps
 
 import pygame, sys
@@ -19,11 +11,10 @@ Black = (0, 0, 0)
 Baby_Blue = (0, 204, 255)
 Golden = (255, 204, 0)
 
+#Screen attributes
 win_width = 600
 win_height = 600
-
 screen = pygame.display.set_mode((win_width, win_height))
-
 pygame.display.set_caption("THE MAZE")
 
 #Images and Shapes
@@ -31,6 +22,7 @@ test_rect = pygame.Rect(100, 100, 100, 50) #coordinates and size
 turtle_img = pygame.image.load("Turtle.jpg").convert() #turtle
 pygame.mouse.set_visible(0) #mouse not visible
 
+#Victory Text
 font = pygame.font.Font('freesansbold.ttf', 28) #font file and size
 text = font.render('Congrats, You are Free!!', True, Golden, Black)
 textRect = text.get_rect()
@@ -59,10 +51,10 @@ while run:
 
     #GAME LOGIC
     if turtle_rect.colliderect(test_rect):
-        pygame.draw.rect(screen, Green, test_rect)
-        screen.blit(text, textRect)
+        pygame.draw.rect(screen, Green, test_rect) #goal turns green
+        screen.blit(text, textRect) # shows victory text
     else:
-        pygame.draw.rect(screen, Black, test_rect)
+        pygame.draw.rect(screen, Black, test_rect) #goal is black by default
  
     
     #DRAW
@@ -78,4 +70,3 @@ while run:
 
 pygame.quit()
 sys.exit()
-
