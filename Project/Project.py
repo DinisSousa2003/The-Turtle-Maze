@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Dec 11 09:06:32 2020
+
+@author: up202006303
+"""
+
 #setup of the general game basis, import image and sounds, create maps
 
 import pygame, sys
@@ -58,15 +66,16 @@ while run:
  
     
     #DRAW
-    pos_t = pygame.mouse.get_pos()
-    x_turtle, y_turtle = pos_t
-    screen.blit(turtle_img, [x_turtle,y_turtle]) #Draw the image ate the mouse coords
+    pos_mouse = pygame.mouse.get_pos()
+    x_mouse, y_mouse = pos_mouse
+    screen.blit(turtle_img, [x_mouse,y_mouse]) #Draw the image ate the mouse coords
     
-    turtle_rect.x = x_turtle
-    turtle_rect.y = y_turtle
+    turtle_rect.x = x_mouse
+    turtle_rect.y = y_mouse
     
     
     pygame.display.update()
 
 pygame.quit()
 sys.exit()
+
