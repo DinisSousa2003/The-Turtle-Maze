@@ -14,9 +14,10 @@ pygame.init()
 clock = pygame.time.Clock()
 
 #COLORS
-Red = (255, 0, 0)
+Green = (0, 197, 144)
 Black = (0, 0, 0)
 Baby_Blue = (0, 204, 255)
+Golden = (255, 204, 0)
 
 win_width = 600
 win_height = 600
@@ -30,8 +31,13 @@ test_rect = pygame.Rect(100, 100, 100, 50) #coordinates and size
 turtle_img = pygame.image.load("Turtle.jpg").convert() #turtle
 pygame.mouse.set_visible(0) #mouse not visible
 
+font = pygame.font.Font('freesansbold.ttf', 28) #font file and size
+text = font.render('Congrats, You are Free!!', True, Golden, Black)
+textRect = text.get_rect()
+textRect.center = (300, 300) # Set pos for text
+
 #Player rect to implement collisions; arbitrary coordinates
-turtle_rect = pygame.Rect(30, 30, turtle_img.get_width(), turtle_img.get_height())
+turtle_rect = pygame.Rect(0, 0, turtle_img.get_width(), turtle_img.get_height())
 
 run = True
 
@@ -53,7 +59,8 @@ while run:
 
     #GAME LOGIC
     if turtle_rect.colliderect(test_rect):
-        pygame.draw.rect(screen, Red, test_rect)
+        pygame.draw.rect(screen, Green, test_rect)
+        screen.blit(text, textRect)
     else:
         pygame.draw.rect(screen, Black, test_rect)
  
