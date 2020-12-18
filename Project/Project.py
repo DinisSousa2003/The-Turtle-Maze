@@ -11,6 +11,13 @@ Created on Fri Dec 11 09:06:32 2020
 import pygame, sys
 pygame.init()
 
+clock = pygame.time.Clock()
+
+#COLORS
+Red = (255, 0, 0)
+Black = (0, 0, 0)
+Baby_Blue = (0, 204, 255)
+
 win_width = 600
 win_height = 600
 
@@ -18,16 +25,26 @@ screen = pygame.display.set_mode((win_width, win_height))
 
 pygame.display.set_caption("THE MAZE")
 
-turtle_img = pygame.image.load("Turtle.jpg").convert()
+#Images and Shapes
+test_rect = pygame.Rect(100, 100, 100, 50) #coordinates and size
+turtle_img = pygame.image.load("Turtle.jpg").convert() #turtle
+pygame.mouse.set_visible(0) #mouse not visible
 
-pygame.mouse.set_visible(0)
+#Player rect to implement collisions; appears first of screen
+turtle_rect = pygame.Rect(30, 30, turtle_img.get_width(), turtle_img.get_height())
 
 run = True
 
 #Game Loop
 
 while run:
-    pygame.time.delay(20)
+    
+    
+    clock.tick(60) #60 fps
+   
+    #SET BCK COLOR
+    screen.fill(Baby_Blue)
+   
     
     #EVENTS
     for event in pygame.event.get():
@@ -35,13 +52,20 @@ while run:
             run = False
 
     #GAME LOGIC
-    
+    if turtle_rect.colliderect(test_rect):
+        pygame.draw.rect(screen, Red, test_rect)
+    else:
+        pygame.draw.rect(screen, Black, test_rect)
+ 
     
     #DRAW
-    screen.fill((0,0,0))
-    pos = pygame.mouse.get_pos()
-    x, y = pos
-    screen.blit(turtle_img, [x,y])
+    pos_t = pygame.mouse.get_pos()
+    x_turtle, y_turtle = pos_t
+    screen.blit(turtle_img, [x_turtle,y_turtle]) #Draw the image ate the mouse coords
+    
+    turtle_rect.x = x_turtle
+    turtle_rect.y = y_turtle
+    
     
     pygame.display.update()
 
