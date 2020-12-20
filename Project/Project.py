@@ -51,15 +51,13 @@ textButton1Rect.center = (300, 300) # Set pos for text
 
 click = False
 
-
-
 #Player rect to implement collisions; arbitrary coordinates
 turtle_rect = pygame.Rect(0, 0, turtle_img.get_width(), turtle_img.get_height())
 
 #Menu
 def main_menu():
     while True:
-        pygame.mouse.set_visible(True) 
+        pygame.mouse.set_visible(True) #we can see the mouse on the menu
         
         clock.tick(60)
  
@@ -69,7 +67,8 @@ def main_menu():
         screen.blit(textMenu, textMenuRect)
         screen.blit(textButton1, textButton1Rect)
  
-        mx, my = pygame.mouse.get_pos()
+        #Mouse Pos
+        mx, my = pygame.mouse.get_pos() 
  
         
         if textButton1Rect.collidepoint((mx, my)):
@@ -118,6 +117,11 @@ def game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    run = False
      
         
         #DRAW
