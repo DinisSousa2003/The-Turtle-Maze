@@ -19,12 +19,13 @@ Black = (0, 0, 0)
 Baby_Blue = (0, 204, 255)
 Golden = (255, 204, 0)
 Red = (255, 0, 0)
+White = (255, 255, 255)
 
 #Screen attributes
 win_width = 600
 win_height = 600
 screen = pygame.display.set_mode((win_width, win_height))
-pygame.display.set_caption("THE MAZE")
+pygame.display.set_caption("THE TURTLE MAZE")
 
 #Images and Shapes
 test_rect = pygame.Rect(100, 100, 100, 50) #coordinates and size
@@ -38,11 +39,16 @@ textWinRect.center = (300, 300) # Set pos for text
 
 #Main Menu Text
 font2 = font = pygame.font.SysFont(None, 50)
-textMenu = font2.render('Menu', True, Red, Black)
+textMenu = font2.render('The Turtle Maze', True, Red, Black)
 textMenuRect = textMenu.get_rect()
 textMenuRect.center = (300, 100) # Set pos for text
 
-#
+#Button 1 Text
+font2 = font = pygame.font.SysFont(None, 40)
+textButton1 = font2.render('Play', True, White, Black)
+textButton1Rect = textButton1.get_rect()
+textButton1Rect.center = (300, 300) # Set pos for text
+
 click = False
 
 
@@ -59,17 +65,16 @@ def main_menu():
  
         screen.fill(Black)
         
-        #main menu text here
+        #DRAW TEXT MENU AND BUTTON
         screen.blit(textMenu, textMenuRect)
+        screen.blit(textButton1, textButton1Rect)
  
         mx, my = pygame.mouse.get_pos()
  
-        button_1 = pygame.Rect(280, 300, 50, 50)
-        if button_1.collidepoint((mx, my)):
+        
+        if textButton1Rect.collidepoint((mx, my)):
             if click:
                 game()
-
-        pygame.draw.rect(screen, Red, button_1)
  
         click = False
         
