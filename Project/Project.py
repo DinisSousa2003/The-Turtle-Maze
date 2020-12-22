@@ -27,9 +27,13 @@ win_height = 600
 screen = pygame.display.set_mode((win_width, win_height))
 pygame.display.set_caption("THE TURTLE MAZE")
 
+#LEVEL 1
+goal1 = pygame.Rect(70, 70, 60, 60) #coordinates and size
+
 #Images and Shapes
-test_rect = pygame.Rect(100, 100, 100, 50) #coordinates and size
 turtle_img = pygame.image.load("Turtle.jpg").convert() #turtle
+#Player rect to implement collisions; arbitrary coordinates
+turtle_rect = pygame.Rect(0, 0, turtle_img.get_width(), turtle_img.get_height())
 
 #Victory Text
 font1 = pygame.font.Font('freesansbold.ttf', 28) #font file and size
@@ -49,13 +53,10 @@ textButton1 = font2.render('Play', True, White, Black)
 textButton1Rect = textButton1.get_rect()
 textButton1Rect.center = (300, 300) # Set pos for text
 
-click = False
-
-#Player rect to implement collisions; arbitrary coordinates
-turtle_rect = pygame.Rect(0, 0, turtle_img.get_width(), turtle_img.get_height())
 
 #Menu
 def main_menu():
+    click = False
     while True:
         pygame.mouse.set_visible(True) #we can see the mouse on the menu
         
@@ -94,8 +95,11 @@ def main_menu():
 
 #Game Loop
 def game():
+    n = 0
     run = True
+    win = False
     pygame.mouse.set_visible(False) #mouse not visible
+    
     while run:
         
         clock.tick(60) #60 fps
@@ -103,14 +107,20 @@ def game():
         #SET BCK COLOR
         screen.fill(Baby_Blue)
        
-    
+        #WIN CONDITIOON
+        if win == True:
+            time.sleep(1.5)
+            main_menu()
+       
         #GAME LOGIC
-        if turtle_rect.colliderect(test_rect):
-            pygame.draw.rect(screen, Green, test_rect) #goal turns green
+        
+        #n > 1 to avoid direct wins 
+        if turtle_rect.colliderect(goal1) and n > 1:
+            win = True
+            pygame.draw.rect(screen, Red, goal1) #goal turns green
             screen.blit(textWin, textWinRect)# shows victory text
-            
         else:
-            pygame.draw.rect(screen, Black, test_rect) #goal is black by default
+            pygame.draw.rect(screen, Green, goal1) #goal is Green by default
             
         
         #EVENTS
@@ -132,8 +142,12 @@ def game():
         turtle_rect.x = x_mouse
         turtle_rect.y = y_mouse
         
-        
+        n += 1
+
         pygame.display.update()
+        
+        
+        
         
 main_menu()
 
