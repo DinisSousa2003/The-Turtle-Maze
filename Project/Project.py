@@ -28,16 +28,32 @@ screen = pygame.display.set_mode((win_width, win_height))
 pygame.display.set_caption("THE TURTLE MAZE")
 
 
+
 #TILES
+TILE_SIZE = 20 #(30*30)
+
 def tile1(x, y):
-    tile1 = pygame.Rect(x*20, y*20, 20, 20)
+    tile1 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE)
     pygame.draw.rect(screen, Black, tile1)
     
+    
+
 #THE GOAL TYPE GOAL CONTAINS THE WINNING CONDITION
-def tile9(x, y):
+def tile8(x, y, n):
     global win
-    tile9 = pygame.Rect(x*20, y*20, 40, 60)
-    if turtle_rect.colliderect(tile9):
+    tile8 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE*3, TILE_SIZE*2)
+    if turtle_rect.colliderect(tile8) and n > 1:
+            screen.fill(Baby_Blue)
+            screen.blit(textWin, textWinRect)# shows victory text
+            pygame.display.update()
+            time.sleep(1.5)
+            return 'next'
+    else:
+        pygame.draw.rect(screen, Green, tile8) #goal is Green by default
+
+def tile9(x, y, n):
+    tile9 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE*2, TILE_SIZE*3)
+    if turtle_rect.colliderect(tile9) and n > 1:
             screen.fill(Baby_Blue)
             screen.blit(textWin, textWinRect)# shows victory text
             pygame.display.update()
@@ -48,7 +64,7 @@ def tile9(x, y):
 
 #THE BCK TILE CONTAINS THE LOSING CONDITION
 def bck(x, y, n):
-    bck = pygame.Rect(x*20, y*20, 20, 20)
+    bck = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE)
     pygame.draw.rect(screen, Baby_Blue, bck)
     if turtle_rect.colliderect(bck) and n > 1:
         screen.fill(Baby_Blue)
@@ -59,8 +75,40 @@ def bck(x, y, n):
         
 
 
-#LEVEL 1
-map1 = [[0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+#LEVElS
+
+map1 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	8,	-1,	-1,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	-1,	-1,	-1,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0]]
+
+map2 = [[0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0, 0],
@@ -92,6 +140,13 @@ map1 = [[0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,	0
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0]]
 
 
+#LIST OF THE GAME LEVELS
+list_levels = [map1, map2]
+level = 0 
+               	       #L1         #L2
+levels_start_pos = [(300, 500), (161, 385)]
+
+
 #Images and Shapes
 turtle_img = pygame.image.load("Turtle.jpg").convert() #turtle
 #Player rect to implement collisions; arbitrary coordinates
@@ -110,16 +165,16 @@ textLostRect = textLost.get_rect()
 textLostRect.center = (300, 300) # Set pos for text
 
 #Main Menu Text
-font2 = font = pygame.font.SysFont(None, 50)
+font2 = font = pygame.font.SysFont(None, 60)
 textMenu = font2.render('The Turtle Maze', True, Red, Black)
 textMenuRect = textMenu.get_rect()
-textMenuRect.center = (300, 100) # Set pos for text
+textMenuRect.center = (300, 200) # Set pos for text
 
 #Button Play Text
 font2 = font = pygame.font.SysFont(None, 40)
 textButton1 = font2.render('Play', True, White, Black)
 textButton1Rect = textButton1.get_rect()
-textButton1Rect.center = (161, 385) # Set pos for text
+textButton1Rect.center = (levels_start_pos[level]) # Set pos for text
 
 
 #Menu
@@ -142,7 +197,7 @@ def main_menu():
         
         if textButton1Rect.collidepoint((mx, my)):
             if click:
-                game()
+                game(level)
  
         click = False
         
@@ -162,43 +217,48 @@ def main_menu():
         pygame.display.update()
 
 #Game Loop
-def game():
+def game(level):
     n = 0
     run = True
-    win = False
     pygame.mouse.set_visible(False) #mouse not visible
     while run:
         
+        
         clock.tick(60) #60 fps
        
-        #SET BCK COLOR
-        screen.fill(Baby_Blue)
+        c_map = list_levels[level]
+        
+        
        
         #DRAW
         y = 0
-        for row in map1:
+        for row in c_map:
             x = 0
             for tile in row:
                 if tile == 0:
                     bck(x, y, n)
                 if tile == 1:
                     tile1(x, y) 
+                if tile == 8:
+                    tile8(x, y, n)
+                    if tile8(x,y,n) == 'next':
+                        level += 1
+                        game(level)
                 if tile == 9:
-                    tile9(x, y)
+                    tile9(x, y, n)
                 x += 1
             y += 1
-        
-        pos_mouse = pygame.mouse.get_pos()
-        #print(pos_mouse) (for control)
-        x_mouse, y_mouse = pos_mouse
-        screen.blit(turtle_img, [x_mouse,y_mouse]) #Draw the image at the mouse coords
-        
-        turtle_rect.x = x_mouse
-        turtle_rect.y = y_mouse        
+            
        
         #GAME LOGIC
+       
+        mx, my = pygame.mouse.get_pos()
+        #print(pos_mouse) (for control)
+        screen.blit(turtle_img, [mx ,my]) #Draw the image at the mouse coords
         
-      
+        turtle_rect.x = mx
+        turtle_rect.y = my
+        
         
         #EVENTS
         for event in pygame.event.get():
@@ -209,11 +269,15 @@ def game():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     run = False
-     
-        n += 1
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+ 
+        
+        #makes sures there are no bugs           
+        n += 1 
 
         pygame.display.update()
-        
         
 main_menu()
 
