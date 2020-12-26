@@ -40,7 +40,6 @@ def tile1(x, y):
 
 #THE GOAL TYPE GOAL CONTAINS THE WINNING CONDITION
 def tile8(x, y, n):
-    global win
     tile8 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE*3, TILE_SIZE*2)
     if turtle_rect.colliderect(tile8) and n > 1:
             screen.fill(Baby_Blue)
