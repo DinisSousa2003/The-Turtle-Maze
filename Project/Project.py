@@ -40,15 +40,51 @@ def tile1(x, y):
 
 #THE GOAL TYPE GOAL CONTAINS THE WINNING CONDITION
 def tile8(x, y, n):
+    global level 
+    
     tile8 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE*3, TILE_SIZE*2)
     if turtle_rect.colliderect(tile8) and n > 1:
+        level += 1
+        cont = pause()
+        return cont
+    else:
+        pygame.draw.rect(screen, Green, tile8) #goal is Green by 
+
+#CALLED BETWEEN LEVELS, USED WITHIN TILE8 FUNC       
+def pause():
+    pause = True 
+    click = False
+    pygame.mouse.set_visible(True)
+    textNextRect.center = (levels_start_pos[level])
+    while pause:
             screen.fill(Baby_Blue)
             screen.blit(textWin, textWinRect)# shows victory text
+            screen.blit(textNext, textNextRect)
+            
+            mx, my = pygame.mouse.get_pos() 
+            
+            if textNextRect.collidepoint((mx, my)):
+                if click:
+                    pause = False
+                    return True
+ 
+            click = False
+    
+            #Events
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        click = True
             pygame.display.update()
-            time.sleep(1.5)
-            return 'next'
-    else:
-        pygame.draw.rect(screen, Green, tile8) #goal is Green by default
+
+
 
 def tile9(x, y, n):
     tile9 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE*2, TILE_SIZE*3)
@@ -141,7 +177,7 @@ map2 = [[0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,	0
 
 #LIST OF THE GAME LEVELS
 list_levels = [map1, map2]
-level = 0 
+level = 0 #starting level
                	       #L1         #L2
 levels_start_pos = [(300, 500), (161, 385)]
 
@@ -171,13 +207,24 @@ textMenuRect.center = (300, 200) # Set pos for text
 
 #Button Play Text
 font2 = font = pygame.font.SysFont(None, 40)
-textButton1 = font2.render('Play', True, White, Black)
-textButton1Rect = textButton1.get_rect()
-textButton1Rect.center = (levels_start_pos[level]) # Set pos for text
+textPlay = font2.render('Play', True, White, None)
+textPlayRect = textPlay.get_rect()
+textPlayRect.center = (levels_start_pos[0]) # Set pos for text
+
+#Button Next Text
+font2 = font = pygame.font.SysFont(None, 40)
+textNext = font2.render('Next', True, White, None)
+textNextRect = textNext.get_rect()
+textNextRect.center = (levels_start_pos[level])
 
 
 #Menu
 def main_menu():
+    global level 
+    
+    
+    level = 0
+    textPlayRect.center = (levels_start_pos[level]) #REDEFINES THE PLAY BUTTON PLACE
     click = False
     while True:
         pygame.mouse.set_visible(True) #we can see the mouse on the menu
@@ -188,15 +235,15 @@ def main_menu():
         
         #DRAW TEXT MENU AND BUTTON
         screen.blit(textMenu, textMenuRect)
-        screen.blit(textButton1, textButton1Rect)
+        screen.blit(textPlay, textPlayRect)
  
         #Mouse Pos
         mx, my = pygame.mouse.get_pos() 
  
         
-        if textButton1Rect.collidepoint((mx, my)):
+        if textPlayRect.collidepoint((mx, my)):
             if click:
-                game(level)
+                game()
  
         click = False
         
@@ -216,16 +263,17 @@ def main_menu():
         pygame.display.update()
 
 #Game Loop
-def game(level):
+def game():
+    global level
     n = 0
     run = True
-    pygame.mouse.set_visible(False) #mouse not visible
     while run:
         
+        pygame.mouse.set_visible(False) #mouse not visible
         
         clock.tick(60) #60 fps
        
-        c_map = list_levels[level]
+        c_map = list_levels[level] #select map level
         
         
        
@@ -239,10 +287,8 @@ def game(level):
                 if tile == 1:
                     tile1(x, y) 
                 if tile == 8:
-                    tile8(x, y, n)
-                    if tile8(x,y,n) == 'next':
-                        level += 1
-                        game(level)
+                    if tile8(x,y,n) == True:
+                        game()
                 if tile == 9:
                     tile9(x, y, n)
                 x += 1
