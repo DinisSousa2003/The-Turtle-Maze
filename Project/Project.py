@@ -65,8 +65,6 @@ def pause():
     pause = True 
     click = False
     pygame.mouse.set_visible(True)
-    textNextRect.center = (levels_start_pos[level])
-    
     while pause:
             screen.fill(Baby_Blue)
             screen.blit(textNext, textNextRect)
@@ -100,10 +98,12 @@ def pause():
 def tile9(x, y, n):
     tile9 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE*2, TILE_SIZE*3)
     if turtle_rect.colliderect(tile9) and n > 1:
+            t1 = round((time.time() - t0), 2)
             screen.fill(Baby_Blue)
+            time_passed(t1)
             screen.blit(textWin, textWinRect)# shows victory text
             pygame.display.update()
-            time.sleep(1.5)
+            time.sleep(3)
             main_menu()
     else:
         pygame.draw.rect(screen, Green, tile9) #goal is Green by default
@@ -116,8 +116,9 @@ def bck(x, y, n):
     if turtle_rect.colliderect(bck) and n > 1:
         screen.fill(Baby_Blue)
         screen.blit(textLost, textLostRect)
+        screen.blit(flipping_img, (100, 230))
         pygame.display.update()
-        time.sleep(1.5)
+        time.sleep(2.25)
         main_menu()
         
 
@@ -223,35 +224,52 @@ map3 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
 #LIST OF THE GAME LEVELS
 list_levels = [map1, map2, map3]
 level = 0 #starting level
-               	       #L1         #L2         #L3
-levels_start_pos = [(300, 500), (483, 156), (161, 385)]
+  
+#THIS STARTING POS WHERE ACHIEVED BY TRYING AND TESTING BEST RESULTS
+
+             	       #L1         #L2         #L3
+levels_start_pos = [(292, 502), (483, 141), (162, 398)]
 
 
 #Images and Shapes
 turtle_img = pygame.image.load("Turtle.jpg").convert() #turtle
-history_img = pygame.image.load("History.jpg").convert()
 #Player rect to implement collisions; arbitrary coordinates
 turtle_rect = pygame.Rect(0, 0, turtle_img.get_width(), turtle_img.get_height())
 
+#.|.
+flipping_img = pygame.image.load("flipping turtle.jpg").convert()
+#Tess' history
+history_img = pygame.image.load("History.jpg").convert()
+
+
 #Victory Text
-font1 = pygame.font.Font('freesansbold.ttf', 28) #font file and size
-textWin = font1.render('Thanks, I am Free!!', True, White, None)
+font1 = pygame.font.Font('freesansbold.ttf', 32) #font file and size
+textWin = font1.render('Thanks, I am Free!!', True, Golden, None)
 textWinRect = textWin.get_rect()
-textWinRect.center = (300, 300) # Set pos for text
+textWinRect.center = (300, 270) # Set pos for text
 
 #Victory Text (between levels)
 def vict_btlevels_DRAW(level):
-    font1 = pygame.font.Font('freesansbold.ttf', 28) #font file and size
-    textWinL = font1.render(f'Moving on to level {level + 1}', True, White, None)
+    font1_1 = pygame.font.Font('freesansbold.ttf', 28) #font file and size
+    textWinL = font1_1.render(f'Moving on to level {level + 1}', True, White, None)
     textWinLRect = textWinL.get_rect()
     textWinLRect.center = (300, 300) # Set pos for text
     screen.blit(textWinL, textWinLRect)
+    
+#Time passed to freedom
+def time_passed(t1):
+    font1_1 = pygame.font.Font('freesansbold.ttf', 28) #font file and size
+    textT_passed = font1_1.render(f'It took me {t1} seconds to escape!', True, White, None)
+    textT_passedRect = textT_passed.get_rect()
+    textT_passedRect.center = (300, 320) # Set pos for text
+    screen.blit(textT_passed, textT_passedRect)
+
 
 #Losing Text
 font1 = pygame.font.Font('freesansbold.ttf', 28) #font file and size
-textLost = font1.render('You failed :(((', True, Red, None)
+textLost = font1.render("Thanks a lot... I'm back in the dungeon :(", True, Red, None)
 textLostRect = textLost.get_rect()
-textLostRect.center = (300, 300) # Set pos for text
+textLostRect.center = (300, 150) # Set pos for text
 
 #Main Menu Text
 font2 = pygame.font.SysFont(None, 60)
@@ -263,19 +281,19 @@ textMenuRect.center = (300, 200) # Set pos for text
 font2_1 = pygame.font.SysFont(None, 40)
 textHistory = font2_1.render('History', True, White, None)
 textHistoryRect = textHistory.get_rect()
-textHistoryRect.center = (300, 440)
+textHistoryRect.center = (300, 430)
 
 #Button Play Text
 font2_1 = pygame.font.SysFont(None, 40)
 textPlay = font2_1.render('Play', True, White, None)
 textPlayRect = textPlay.get_rect()
-textPlayRect.center = (levels_start_pos[0]) # Set pos for text
+textPlayRect.center = (300, 485) # Set pos for text
 
 #Button Next Text
 font2_1 = pygame.font.SysFont(None, 40)
 textNext = font2_1.render('Next', True, White, None)
 textNextRect = textNext.get_rect()
-textNextRect.center = (levels_start_pos[level])
+textNextRect.center = (300, 350)
 
 #Current Level
 def C_level_DRAW(level):
@@ -288,10 +306,8 @@ def C_level_DRAW(level):
 
 #Menu
 def main_menu():
-    global level 
-    
+    global level , t0
     level = 0
-    textPlayRect.center = (levels_start_pos[level]) #REDEFINES THE PLAY BUTTON PLACE
     click = False
     while True:
         pygame.mouse.set_visible(True) #we can see the mouse on the menu
@@ -300,19 +316,21 @@ def main_menu():
  
         screen.fill(Black)
         
-        #DRAW TEXT MENU AND BUTTON
+        #DRAW TEXT MENU AND BUTTONS
         screen.blit(textMenu, textMenuRect)
         screen.blit(textPlay, textPlayRect)
         screen.blit(textHistory, textHistoryRect)
  
         #Mouse Pos
-        mx, my = pygame.mouse.get_pos() 
-        print(mx, my)
+        mx, my = pygame.mouse.get_pos()
         
+        #CLICK PLAY
         if textPlayRect.collidepoint((mx, my)):
             if click:
-                game()
+                t0 = time.time()
+                pre_game()
         
+        #CLICK HISTORY
         if textHistoryRect.collidepoint((mx, my)):
             if click:
                 history()
@@ -335,7 +353,7 @@ def main_menu():
  
         pygame.display.update()
 
-
+#WHERE YOU CAN READ ABOUT TESS!
 def history():
     run = True
     while run:
@@ -352,13 +370,78 @@ def history():
                 if event.key == pygame.K_ESCAPE:
                     run = False
         
+        pygame.display.update()  
+        
+#STATE PRE-GAME, YOU HAVE TO CLICK TO TURTLE TO BEGIN   
+def pre_game():
+    global level
+    run_pre = True
+    click = False
+    n = 0
+    while run_pre:
+    
+        c_map = list_levels[level] #select map level
+
+        #DRAW      
+        y = 0
+        for row in c_map:
+            x = 0
+            for tile in row:
+                    if tile == 0:
+                        bck(x, y, n)
+                    if tile == 1:
+                        tile1(x, y) 
+                    if tile == 2:
+                        tile2(x, y, n)
+                    if tile == 8:
+                        if tile8(x, y, n) == True:
+                            game()
+                    if tile == 9:
+                        tile9(x,y,n)
+                    x += 1
+            y += 1
+            
+        #DRAWS CURRENT LEVEL ON TOP
+        C_level_DRAW(level)
+        
+        #DRAW THE TURTLE AT THE LEVEL STARTING POSITION
+        #DEFINE THE RECT TO BE THERE TOO
+        screen.blit(turtle_img, levels_start_pos[level])
+        turtle_rect.x = levels_start_pos[level][0]
+        turtle_rect.y = levels_start_pos[level][1]
+        
+        mx, my = pygame.mouse.get_pos()
+        
+        #CHECK IF TURTLE IS CLICKED
+        if turtle_rect.collidepoint((mx, my)):
+            if click:
+                game()
+        
+        click = False
+        
+        #EVENTS
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run_pre = False
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    run_pre = False
+                    main_menu()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+        
         pygame.display.update()
+
         
 #Game Loop
 def game():
     global level
     n = 0
     run = True
+    
     while run:
         
         pygame.mouse.set_visible(False) #mouse not visible
@@ -381,7 +464,7 @@ def game():
                     tile2(x, y, n)
                 if tile == 8:
                     if tile8(x, y, n) == True:
-                        game()
+                        pre_game()
                 if tile == 9:
                     tile9(x,y,n)
                 x += 1
@@ -408,14 +491,9 @@ def game():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     run = False
-           
-            #ACTIVATE IF NEED TO CLICK/USE BUTTONS
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    click = True
- 
+                    main_menu()
         
-        #makes sures there are no bugs           
+        #makes sures there are no bugs (direct wins, losses)
         if n < 2:
             n += 1 
 
