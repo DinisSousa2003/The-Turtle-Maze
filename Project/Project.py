@@ -28,7 +28,6 @@ screen = pygame.display.set_mode((win_width, win_height))
 pygame.display.set_caption("THE TURTLE MAZE")
 
 
-
 #TILES
 TILE_SIZE = 20 #(30*30)
 
@@ -45,9 +44,45 @@ def tile2(x, y, n):
         tile1(x, y)
     else:
         bck(x, y, n)
-    
-    
 
+#FAZER OS TILES 3, BOLAS QUE MATAM A TESS (NÍVEL 3)
+#BOLAS SUP
+def draw_circles_sup(alist):
+    global vel_bolas
+    Radius = 5
+    for i in range(len(alist)):
+        x, y = alist[i]
+        pygame.draw.circle(screen, White, (x, y) , Radius)
+        
+        #AS ALL BALLS COLLIDE AT THE SAME TIME, WHEN THE FIRST BALL COLLIDES
+        #WITH THE WALLS ALL BALLS CHANGE THEIR DIRECTION
+        if (i == 0 and (y + Radius >= 200 or y - Radius <= 140)):
+            vel_bolas *= -1
+        
+        #SOME BALLS GO UP, OTHERS DOWN
+        if x % 80 == 0:
+            y += vel_bolas #coord[1] == y
+        else:
+            y += vel_bolas * -1
+        
+        alist[i] = (x, y) #list are alieased so this works!
+        
+#BOLAS INF
+def draw_circles_inf(alist, vel):
+    Radius = 5
+    for i in range(len(alist)):
+        x, y = alist[i]
+        pygame.draw.circle(screen, White, (x, y) , Radius)
+        
+        #SOME BALLS GO UP, OTHERS DOWN
+        if not(x % 80 == 0):
+            y += vel #coord[1] == y
+        else:
+            y += vel * -1
+       
+        alist[i] = (x, y)
+    
+    
 #TILE 8 IS THE GOAL CONTAINS THE WINNING CONDITION
 def tile8(x, y, n):
     global level 
@@ -100,7 +135,11 @@ def tile9(x, y, n):
     if turtle_rect.colliderect(tile9) and n > 1:
             t1 = round((time.time() - t0), 2)
             screen.fill(Baby_Blue)
-            time_passed(t1)
+            #minutes and seconds passed
+            mn = round(t1 // 60)
+            s = round(t1 - (mn)*60)
+            s = str(s) if s > 9 else ('0' + str(s))
+            time_passed(mn, s)
             screen.blit(textWin, textWinRect)# shows victory text
             pygame.display.update()
             time.sleep(3)
@@ -114,12 +153,18 @@ def bck(x, y, n):
     pygame.draw.rect(screen, Baby_Blue, bck)
     #REMOVE TO TEST GAME WITHOUT DYING
     if turtle_rect.colliderect(bck) and n > 1:
-        screen.fill(Baby_Blue)
-        screen.blit(textLost, textLostRect)
-        screen.blit(flipping_img, (100, 230))
-        pygame.display.update()
-        time.sleep(2.25)
-        main_menu()
+        #commentate to remove losing
+        lost()
+        print("ah")
+
+#LOSING CONDITION
+def lost():
+    screen.fill(Baby_Blue)
+    screen.blit(textLost, textLostRect)
+    screen.blit(flipping_img, (100, 230))
+    pygame.display.update()
+    time.sleep(2.25)
+    main_menu()
         
 
 
@@ -157,6 +202,7 @@ map1 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0]]
 
 
+###
 map2 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
@@ -188,7 +234,44 @@ map2 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0]]
 
-map3 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+###
+map3 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0],
+[0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,  1,	0,	0,	0],
+[0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0],
+[0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0],
+[0,	0,	0,	1,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0],
+[0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	8,	-1,	-1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	-1,	-1,	-1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,  0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0]]
+
+circles_sup = [(200, 170), (240, 170), (280, 170), (320, 170), (360, 170), (400, 170), (440, 170)]
+circles_inf = [(200, 350), (240, 350), (280, 350), (320, 350), (360, 350), (400, 350), (440, 350)]
+vel_bolas = 1
+
+###
+map4 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
 [0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
@@ -220,13 +303,13 @@ map3 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0]]
 
 #LIST OF THE GAME LEVELS
-list_levels = [map1, map2, map3]
+list_levels = [map1, map2, map3, map4] 
 level = 0 #starting level
   
 #THIS STARTING POS WHERE ACHIEVED BY TRYING AND TESTING BEST RESULTS
 
-             	       #L1         #L2         #L3
-levels_start_pos = [(292, 502), (483, 141), (162, 398)]
+             	       #L1         #L2         #L3         #L4
+levels_start_pos = [(292, 502), (483, 141), (106, 162), (162, 398)]     
 
 
 #Images and Shapes
@@ -255,9 +338,9 @@ def vict_btlevels_DRAW(level):
     screen.blit(textWinL, textWinLRect)
     
 #Time passed to freedom
-def time_passed(t1):
+def time_passed(minutes, seconds):
     font1_1 = pygame.font.Font('freesansbold.ttf', 28) #font file and size
-    textT_passed = font1_1.render(f'It took me {t1} seconds to escape!', True, White, None)
+    textT_passed = font1_1.render(f'It took me {minutes}:{seconds} minutes to escape!', True, White, None)
     textT_passedRect = textT_passed.get_rect()
     textT_passedRect.center = (300, 320) # Set pos for text
     screen.blit(textT_passed, textT_passedRect)
@@ -412,7 +495,7 @@ def pre_game():
                         tile9(x,y,n)
                     x += 1
             y += 1
-            
+        
         #DRAWS CURRENT LEVEL ON TOP
         C_level_DRAW(level)
         #DRAWS TUT ON LEVEL 1
@@ -453,7 +536,7 @@ def pre_game():
         
 #Game Loop
 def game():
-    global level
+    global level, vel_bolas
     n = 0
     run = True
     
@@ -464,7 +547,6 @@ def game():
         clock.tick(60) #60 fps
        
         c_map = list_levels[level] #select map level
-        
        
         #DRAW      
         y = 0
@@ -484,6 +566,10 @@ def game():
                     tile9(x,y,n)
                 x += 1
             y += 1
+          
+        if level == 2:
+            draw_circles_sup(circles_sup)
+            draw_circles_inf(circles_inf, vel_bolas)
             
         C_level_DRAW(level)
         
