@@ -20,13 +20,26 @@ Baby_Blue = (0, 204, 255)
 Golden = (255, 204, 0)
 Red = (255, 0, 0)
 White = (255, 255, 255)
+Light_Grey = (211, 211, 211)
+##
 
 #Screen attributes
 win_width = 600
 win_height = 600
 screen = pygame.display.set_mode((win_width, win_height))
 pygame.display.set_caption("THE TURTLE MAZE")
+##
 
+#IMAGES
+turtle_img = pygame.image.load("Turtle.jpg").convert() #turtle
+#Player rect to implement collisions; arbitrary coordinates
+turtle_rect = pygame.Rect(0, 0, turtle_img.get_width(), turtle_img.get_height())
+
+flipping_img = pygame.image.load("flipping turtle.jpg").convert()
+history_img = pygame.image.load("History.jpg").convert()
+Title_Menu = pygame.image.load("The_Turtle_Maze.png").convert()
+Free_Turtle_img = pygame.image.load("Free_turtle.jpg").convert()
+##
 
 #TILES
 TILE_SIZE = 20 #(30*30)
@@ -44,6 +57,10 @@ def tile2(x, y, n):
         tile1(x, y)
     else:
         bck(x, y, n)
+        
+def tile3(x, y):
+    tile3 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE)
+    pygame.draw.rect(screen, Red, tile3)
 
 #FAZER OS TILES 3, BOLAS QUE MATAM A TESS (NÍVEL 3)
 #BOLAS SUP
@@ -51,8 +68,14 @@ def draw_circles_sup(alist):
     global vel_bolas
     Radius = 5
     for i in range(len(alist)):
+        #BALLS COORDS
         x, y = alist[i]
-        pygame.draw.circle(screen, White, (x, y) , Radius)
+        #DRAW THE BALL
+        pygame.draw.circle(screen, White, (x, y), Radius)
+        #DEFINE A RECT TO HANDLE COLLISIONS
+        ball = pygame.Rect((0,0), (Radius*2, Radius*2))
+        #THE CENTER ARE THE COORDS
+        ball.center = x, y
         
         #AS ALL BALLS COLLIDE AT THE SAME TIME, WHEN THE FIRST BALL COLLIDES
         #WITH THE WALLS ALL BALLS CHANGE THEIR DIRECTION
@@ -65,22 +88,50 @@ def draw_circles_sup(alist):
         else:
             y += vel_bolas * -1
         
+        #IF THE TURTLE COLLIDES WITH THE BALL
+        if turtle_rect.colliderect(ball):
+            lost()
+        
         alist[i] = (x, y) #list are alieased so this works!
         
 #BOLAS INF
 def draw_circles_inf(alist, vel):
     Radius = 5
     for i in range(len(alist)):
+        #BALLS COORDS
         x, y = alist[i]
-        pygame.draw.circle(screen, White, (x, y) , Radius)
+        #DRAW THE BALL
+        pygame.draw.circle(screen, White, (x, y), Radius)
+        #DEFINE A RECT TO HANDLE COLLISIONS
+        ball = pygame.Rect((0,0), (Radius*2, Radius*2))
+        #THE CENTER ARE THE COORDS
+        ball.center = x, y
         
         #SOME BALLS GO UP, OTHERS DOWN
         if not(x % 80 == 0):
             y += vel #coord[1] == y
         else:
             y += vel * -1
+        
+        #IF THE TURTLE COLLIDES WITH THE BALL
+        if turtle_rect.colliderect(ball):
+            lost()
        
         alist[i] = (x, y)
+        
+def draw_balls_pregame(list1, list2):
+    Radius = 5
+    for i in list1:
+        #BALLS COORDS
+        x, y = i
+        #DRAW THE BALL
+        pygame.draw.circle(screen, White, (x, y), Radius)
+    for i in list2:
+        #BALLS COORDS
+        x, y = i
+        #DRAW THE BALL
+        pygame.draw.circle(screen, White, (x, y), Radius)
+    
     
     
 #TILE 8 IS THE GOAL CONTAINS THE WINNING CONDITION
@@ -134,15 +185,16 @@ def tile9(x, y, n):
     tile9 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE*2, TILE_SIZE*3)
     if turtle_rect.colliderect(tile9) and n > 1:
             t1 = round((time.time() - t0), 2)
-            screen.fill(Baby_Blue)
+            screen.fill(Black)
+            screen.blit(Free_Turtle_img, (25,25))
             #minutes and seconds passed
             mn = round(t1 // 60)
             s = round(t1 - (mn)*60)
             s = str(s) if s > 9 else ('0' + str(s))
             time_passed(mn, s)
-            screen.blit(textWin, textWinRect)# shows victory text
+            # screen.blit(textWin, textWinRect)# shows victory text
             pygame.display.update()
-            time.sleep(3)
+            time.sleep(5)
             main_menu()
     else:
         pygame.draw.rect(screen, Green, tile9) #goal is Green by default
@@ -152,20 +204,24 @@ def bck(x, y, n):
     bck = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE)
     pygame.draw.rect(screen, Baby_Blue, bck)
     #REMOVE TO TEST GAME WITHOUT DYING
-    if turtle_rect.colliderect(bck) and n > 1:
-        #commentate to remove losing
-        lost()
-        print("ah")
+    # if turtle_rect.colliderect(bck) and n > 1:
+    #     lost()
+       
 
 #LOSING CONDITION
 def lost():
+    global circles_inf, circles_sup
+    #SET BALLS ON LEVEL 2 TO INICIAL POS
+    circles_sup = [(200, 170), (240, 170), (280, 170), (320, 170), (360, 170), (400, 170), (440, 170)]
+    circles_inf = [(200, 350), (240, 350), (280, 350), (320, 350), (360, 350), (400, 350), (440, 350)]
+    #SET LOSING SCREEN AND BACK TO MENU
     screen.fill(Baby_Blue)
     screen.blit(textLost, textLostRect)
     screen.blit(flipping_img, (100, 230))
     pygame.display.update()
     time.sleep(2.25)
     main_menu()
-        
+##        
 
 
 #LEVElS
@@ -203,7 +259,39 @@ map1 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
 
 
 ###
-map2 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+map2 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,  0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	8,	-1,	-1,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	-1,	-1,	-1,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0]]
+
+###
+map3 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
@@ -235,7 +323,7 @@ map2 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0]]
 
 ###
-map3 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+map4 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
@@ -268,60 +356,51 @@ map3 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
 
 circles_sup = [(200, 170), (240, 170), (280, 170), (320, 170), (360, 170), (400, 170), (440, 170)]
 circles_inf = [(200, 350), (240, 350), (280, 350), (320, 350), (360, 350), (400, 350), (440, 350)]
-vel_bolas = 1
+vel_bolas = 1.1
 
-###
-map4 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	9,	-1,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	-1,	-1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	-1,	-1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0],
-[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0, 0]]
+map5 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	3,	0,	0,	0,	0,	0,	0,	0,	0,	0,	3,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	3,	0,	0,	0,	0,	0,	0,	0,	0,	0,	3,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	3,	3,	3,	3,	3,	0,	0,	0,	0,	0,	3,	3,	3,	3,	3,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	3,	3,	3,	3,	3,	0,	0,	0,	0,	0,	3,	3,	3,	3,	3,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	3,	3,	3,	3,	3,	0,	0,	0,	0,	0,	3,	3,	3,	3,	3,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	9,	-1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	-1,	-1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	-1,	-1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0]]
+
+#THE FINAL LEVEL HAS TILE 9 ON THE END
+
 
 #LIST OF THE GAME LEVELS
-list_levels = [map1, map2, map3, map4] 
+list_levels = [map1, map2, map3, map4, map5] 
 level = 0 #starting level
   
 #THIS STARTING POS WHERE ACHIEVED BY TRYING AND TESTING BEST RESULTS
+             	       #L1         #L2         #L3         #L4         #L5
+levels_start_pos = [(292, 502), (162, 398), (483, 141), (106, 162), (480, 140)]    
 
-             	       #L1         #L2         #L3         #L4
-levels_start_pos = [(292, 502), (483, 141), (106, 162), (162, 398)]     
-
-
-#Images and Shapes
-turtle_img = pygame.image.load("Turtle.jpg").convert() #turtle
-#Player rect to implement collisions; arbitrary coordinates
-turtle_rect = pygame.Rect(0, 0, turtle_img.get_width(), turtle_img.get_height())
-
-#.|.
-flipping_img = pygame.image.load("flipping turtle.jpg").convert()
-#Tess' history
-history_img = pygame.image.load("History.jpg").convert()
-
+## 
 
 #Victory Text
 font1 = pygame.font.Font('freesansbold.ttf', 32) #font file and size
@@ -340,9 +419,9 @@ def vict_btlevels_DRAW(level):
 #Time passed to freedom
 def time_passed(minutes, seconds):
     font1_1 = pygame.font.Font('freesansbold.ttf', 28) #font file and size
-    textT_passed = font1_1.render(f'It took me {minutes}:{seconds} minutes to escape!', True, White, None)
+    textT_passed = font1_1.render(f'It took me {minutes}:{seconds} minutes to escape!', True, Black, None)
     textT_passedRect = textT_passed.get_rect()
-    textT_passedRect.center = (300, 320) # Set pos for text
+    textT_passedRect.center = (300, 470) # Set pos for text
     screen.blit(textT_passed, textT_passedRect)
 
 
@@ -351,12 +430,6 @@ font1 = pygame.font.Font('freesansbold.ttf', 28) #font file and size
 textLost = font1.render("Thanks a lot... I'm back in the dungeon :(", True, Red, None)
 textLostRect = textLost.get_rect()
 textLostRect.center = (300, 150) # Set pos for text
-
-#Main Menu Text
-font2 = pygame.font.SysFont(None, 60)
-textMenu = font2.render('The Turtle Maze', True, Red, Black)
-textMenuRect = textMenu.get_rect()
-textMenuRect.center = (300, 200) # Set pos for text
 
 #Button History Text
 font2_1 = pygame.font.SysFont(None, 40)
@@ -398,6 +471,7 @@ def Click_Turtle():
         textClick_TurtleRect.center = (120, 230)
         screen.blit(textClick_Turtle, textClick_TurtleRect)
 
+##
 
 #Menu
 def main_menu():
@@ -412,7 +486,7 @@ def main_menu():
         screen.fill(Black)
         
         #DRAW TEXT MENU AND BUTTONS
-        screen.blit(textMenu, textMenuRect)
+        screen.blit(Title_Menu, (105, 150))
         screen.blit(textPlay, textPlayRect)
         screen.blit(textHistory, textHistoryRect)
  
@@ -448,6 +522,8 @@ def main_menu():
  
         pygame.display.update()
 
+##
+
 #WHERE YOU CAN READ ABOUT TESS!
 def history():
     run = True
@@ -466,6 +542,8 @@ def history():
                     run = False
         
         pygame.display.update()  
+
+##
         
 #STATE PRE-GAME, YOU HAVE TO CLICK TO TURTLE TO BEGIN   
 def pre_game():
@@ -476,7 +554,7 @@ def pre_game():
     while run_pre:
     
         c_map = list_levels[level] #select map level
-
+        
         #DRAW      
         y = 0
         for row in c_map:
@@ -488,6 +566,8 @@ def pre_game():
                         tile1(x, y) 
                     if tile == 2:
                         tile2(x, y, n)
+                    if tile == 3:
+                        tile3(x, y)
                     if tile == 8:
                         if tile8(x, y, n) == True:
                             game()
@@ -495,6 +575,9 @@ def pre_game():
                         tile9(x,y,n)
                     x += 1
             y += 1
+        
+        if level == 3:
+            draw_balls_pregame(circles_sup, circles_inf)
         
         #DRAWS CURRENT LEVEL ON TOP
         C_level_DRAW(level)
@@ -533,6 +616,7 @@ def pre_game():
         
         pygame.display.update()
 
+##
         
 #Game Loop
 def game():
@@ -559,6 +643,8 @@ def game():
                     tile1(x, y) 
                 if tile == 2:
                     tile2(x, y, n)
+                if tile == 3:
+                    tile3(x, y)
                 if tile == 8:
                     if tile8(x, y, n) == True:
                         pre_game()
@@ -567,7 +653,7 @@ def game():
                 x += 1
             y += 1
           
-        if level == 2:
+        if level == 3:
             draw_circles_sup(circles_sup)
             draw_circles_inf(circles_inf, vel_bolas)
             
