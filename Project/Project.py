@@ -7,7 +7,7 @@ Created on Fri Dec  4 19:14:35 2020
 
 #setup of the general game basis, import image and sounds, create maps
 
-import pygame, sys, time
+import pygame, sys, time, random
 
 pygame.init()
 
@@ -41,6 +41,14 @@ Title_Menu = pygame.image.load("The_Turtle_Maze.png").convert()
 Free_Turtle_img = pygame.image.load("Free_turtle.jpg").convert()
 ##
 
+#SOUND
+Death_Sound = pygame.mixer.Sound("Die Sound Effect.wav")
+Button_Sound = pygame.mixer.Sound("Button.wav")
+Level_Win_Sound = pygame.mixer.Sound("Level Win.wav")
+Escaped_Sound = pygame.mixer.Sound("Escaped.wav")
+Daniel_Sound = pygame.mixer.Sound("Game Music.wav") #thanks Daniel for the music
+Go_Back_Sound = pygame.mixer.Sound("Go Back.wav")
+
 #TILES
 TILE_SIZE = 20 #(30*30)
 
@@ -57,12 +65,43 @@ def tile2(x, y, n):
         tile1(x, y)
     else:
         bck(x, y, n)
-        
-def tile3(x, y):
-    tile3 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE)
+ 
+#ENEMY PRE GAME
+def tile3(x,y):
+    #ENEMY
+    tile3 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE*3, TILE_SIZE*3)
+    pygame.draw.rect(screen, Red, tile3) 
+    
+#ENEMY GAME    
+def enemies(x, y):
+    #ENEMY
+    tile3 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE*3, TILE_SIZE*3)
     pygame.draw.rect(screen, Red, tile3)
+    
+    #FIRE
+    fireChance = random.random() #number 0-1
+    if fireChance < Probability_of_Fire and len(bullets) <= Max_Enemy_Bullets:
+        bullets.append(pygame.Rect((x*TILE_SIZE + 1.5 * TILE_SIZE, y*TILE_SIZE + Bullets_SIZE[1]), Bullets_SIZE))
+    
+    #BULLET CONTROL
+    for b in bullets:
+        
+        #Move the bullets
+        pygame.Rect.move_ip(b, (Vel_bullets))
+        
+        #Check collision
+        if b.colliderect(turtle_rect):
+            lost()
+        
+        #If bullet go off screen: remove
+        if b.y < 0:
+            bullets.remove(b)
+        
+        #Draw Bullets
+        pygame.draw.rect(screen, White, b)
+        
 
-#FAZER OS TILES 3, BOLAS QUE MATAM A TESS (NÍVEL 3)
+#BOLAS QUE MATAM A TESS (NÍVEL 4)
 #BOLAS SUP
 def draw_circles_sup(alist):
     global vel_bolas
@@ -140,62 +179,18 @@ def tile8(x, y, n):
     
     tile8 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE*3, TILE_SIZE*2)
     if turtle_rect.colliderect(tile8) and n > 1:
+        Level_Win_Sound.play()
         level += 1
         cont = pause()
         return cont
     else:
         pygame.draw.rect(screen, Green, tile8) #goal is Green by 
 
-#CALLED BETWEEN LEVELS, USED WITHIN TILE8 FUNC       
-def pause():
-    pause = True 
-    click = False
-    pygame.mouse.set_visible(True)
-    while pause:
-            screen.fill(Baby_Blue)
-            screen.blit(textNext, textNextRect)
-            vict_btlevels_DRAW(level)
-            
-            mx, my = pygame.mouse.get_pos() 
-            
-            if textNextRect.collidepoint((mx, my)):
-                if click:
-                    pause = False
-                    return True
- 
-            click = False
-    
-            #Events
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        sys.exit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        click = True
-            pygame.display.update()
-
-
 #TILE 9 IS THE GOAL FOR THE LAST LEVEL
 def tile9(x, y, n):
     tile9 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE*2, TILE_SIZE*3)
     if turtle_rect.colliderect(tile9) and n > 1:
-            t1 = round((time.time() - t0), 2)
-            screen.fill(Black)
-            screen.blit(Free_Turtle_img, (25,25))
-            #minutes and seconds passed
-            mn = round(t1 // 60)
-            s = round(t1 - (mn)*60)
-            s = str(s) if s > 9 else ('0' + str(s))
-            time_passed(mn, s)
-            # screen.blit(textWin, textWinRect)# shows victory text
-            pygame.display.update()
-            time.sleep(5)
-            main_menu()
+           win()
     else:
         pygame.draw.rect(screen, Green, tile9) #goal is Green by default
 
@@ -204,22 +199,54 @@ def bck(x, y, n):
     bck = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE)
     pygame.draw.rect(screen, Baby_Blue, bck)
     #REMOVE TO TEST GAME WITHOUT DYING
-    # if turtle_rect.colliderect(bck) and n > 1:
-    #     lost()
+    if turtle_rect.colliderect(bck) and n > 1:
+        lost()
        
 
 #LOSING CONDITION
 def lost():
-    global circles_inf, circles_sup
-    #SET BALLS ON LEVEL 2 TO INICIAL POS
+    global circles_inf, circles_sup, level
+    #SET BALLS ON LEVEL 4 TO INICIAL POS
     circles_sup = [(200, 170), (240, 170), (280, 170), (320, 170), (360, 170), (400, 170), (440, 170)]
     circles_inf = [(200, 350), (240, 350), (280, 350), (320, 350), (360, 350), (400, 350), (440, 350)]
+    
+    #SET LEVEL TO 0
+    level = 0
+    
     #SET LOSING SCREEN AND BACK TO MENU
+    Death_Sound.play()
     screen.fill(Baby_Blue)
     screen.blit(textLost, textLostRect)
     screen.blit(flipping_img, (100, 230))
     pygame.display.update()
-    time.sleep(2.25)
+    time.sleep(2.75)
+    main_menu()
+    
+    
+def win():
+    global circles_inf, circles_sup, level
+    #SET BALLS ON LEVEL 4 TO INICIAL POS
+    circles_sup = [(200, 170), (240, 170), (280, 170), (320, 170), (360, 170), (400, 170), (440, 170)]
+    circles_inf = [(200, 350), (240, 350), (280, 350), (320, 350), (360, 350), (400, 350), (440, 350)]
+    
+    #SET LEVEL TO 0
+    level = 0
+    
+    Escaped_Sound.play()
+     
+    screen.fill(Black)
+    screen.blit(Free_Turtle_img, (25,25))
+     
+    #minutes and seconds passed
+    t1 = round((time.time() - t0), 2)
+    mn = round(t1 // 60)
+    s = round(t1 - (mn)*60)
+    s = str(s) if s > 9 else ('0' + str(s))
+    time_passed(mn, s)
+    
+    # screen.blit(textWin, textWinRect)# shows victory text
+    pygame.display.update()
+    time.sleep(5)
     main_menu()
 ##        
 
@@ -362,32 +389,39 @@ map5 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	0,	3,	0,	0,	0,	0,	0,	0,	0,	0,	0,	3,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	0,	3,	0,	0,	0,	0,	0,	0,	0,	0,	0,	3,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
-[0,	0,	0,	0,	3,	3,	3,	3,	3,	0,	0,	0,	0,	0,	3,	3,	3,	3,	3,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
-[0,	0,	0,	0,	3,	3,	3,	3,	3,	0,	0,	0,	0,	0,	3,	3,	3,	3,	3,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
-[0,	0,	0,	0,	3,	3,	3,	3,	3,	0,	0,	0,	0,	0,	3,	3,	3,	3,	3,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	3,	-1,	-1,	0,	0,	0,	3,	-1,	-1,	0,	0,	0,	3,	-1,	-1,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	-1,	-1,	-1,	0,	0,	0,	-1,	-1,	-1,	0,	0,	0,	-1,	-1,	-1,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	-1,	-1,	-1,	0,	0,	0,	-1,	-1,	-1,	0,	0,	0,	-1,	-1,	-1,	0,	0,	1,	1,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	9,	-1,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	-1,	-1,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	-1,	-1,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0]]
+
+bullets = []
+Vel_bullets = (0,-1.5)
+Probability_of_Fire = 0.03
+Max_Enemy_Bullets = 50
+Bullets_SIZE = (4, 4)
+
 
 #THE FINAL LEVEL HAS TILE 9 ON THE END
 
@@ -398,7 +432,7 @@ level = 0 #starting level
   
 #THIS STARTING POS WHERE ACHIEVED BY TRYING AND TESTING BEST RESULTS
              	       #L1         #L2         #L3         #L4         #L5
-levels_start_pos = [(292, 502), (162, 398), (483, 141), (106, 162), (480, 140)]    
+levels_start_pos = [(292, 502), (162, 398), (483, 141), (106, 162), (462, 142)]    
 
 ## 
 
@@ -459,29 +493,42 @@ def C_level_DRAW(level):
     
 #Tutorial click turtle
 def Click_Turtle():    
-        font2_3 = pygame.font.SysFont(None, 30)
+    font2_3 = pygame.font.SysFont(None, 30)
+    
+    textClick_Turtle = font2_3.render("Click on the turtle", True, White, None)
+    textClick_TurtleRect = textClick_Turtle.get_rect()
+    textClick_TurtleRect.center = (120, 200)
+    screen.blit(textClick_Turtle, textClick_TurtleRect)
         
-        textClick_Turtle = font2_3.render("Click on the turtle", True, White, None)
-        textClick_TurtleRect = textClick_Turtle.get_rect()
-        textClick_TurtleRect.center = (120, 200)
-        screen.blit(textClick_Turtle, textClick_TurtleRect)
+    textClick_Turtle = font2_3.render("to begin", True, White, None)
+    textClick_TurtleRect = textClick_Turtle.get_rect()
+    textClick_TurtleRect.center = (120, 230)
+    screen.blit(textClick_Turtle, textClick_TurtleRect)
         
-        textClick_Turtle = font2_3.render("to begin", True, White, None)
-        textClick_TurtleRect = textClick_Turtle.get_rect()
-        textClick_TurtleRect.center = (120, 230)
-        screen.blit(textClick_Turtle, textClick_TurtleRect)
+def Esc_to_Exit():
+     font3_1 = pygame.font.SysFont('freesans', 16)
+        
+     textClick_Turtle = font3_1.render("Press ESC to return", True, White, None)
+     textClick_TurtleRect = textClick_Turtle.get_rect()
+     textClick_TurtleRect.center = (75, 10)
+     screen.blit(textClick_Turtle, textClick_TurtleRect)
+        
+     textClick_Turtle = font3_1.render("to the main menu", True, White, None)
+     textClick_TurtleRect = textClick_Turtle.get_rect()
+     textClick_TurtleRect.center = (74, 28)
+     screen.blit(textClick_Turtle, textClick_TurtleRect)
 
 ##
 
 #Menu
 def main_menu():
     global level, t0
-    level = 0
+    Daniel_Sound.play(-1)
     click = False
     while True:
         pygame.mouse.set_visible(True) #we can see the mouse on the menu
         
-        clock.tick(60)
+        clock.tick(60) #60 fps
  
         screen.fill(Black)
         
@@ -497,11 +544,14 @@ def main_menu():
         if textPlayRect.collidepoint((mx, my)):
             if click:
                 t0 = time.time()
+                pygame.mixer.Sound.stop(Daniel_Sound)
+                Button_Sound.play()
                 pre_game()
         
         #CLICK HISTORY
         if textHistoryRect.collidepoint((mx, my)):
             if click:
+                Button_Sound.play()
                 history()
         
         
@@ -528,8 +578,12 @@ def main_menu():
 def history():
     run = True
     while run:
+        clock.tick(60) #60 fps
         
+        screen.fill(Black)
+        Esc_to_Exit()
         screen.blit(history_img, (50,50))
+        
         
         #EVENTS
         for event in pygame.event.get():
@@ -539,10 +593,45 @@ def history():
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    Go_Back_Sound.play()
                     run = False
         
         pygame.display.update()  
+##
 
+#CALLED BETWEEN LEVELS, USED WITHIN TILE8 FUNC       
+def pause():
+    pause = True 
+    click = False
+    pygame.mouse.set_visible(True)
+    while pause:
+            screen.fill(Baby_Blue)
+            screen.blit(textNext, textNextRect)
+            vict_btlevels_DRAW(level)
+            
+            mx, my = pygame.mouse.get_pos() 
+            
+            if textNextRect.collidepoint((mx, my)):
+                if click:
+                    Button_Sound.play()
+                    pause = False
+                    return True
+ 
+            click = False
+    
+            #Events
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        click = True
+            pygame.display.update()
 ##
         
 #STATE PRE-GAME, YOU HAVE TO CLICK TO TURTLE TO BEGIN   
@@ -552,6 +641,7 @@ def pre_game():
     click = False
     n = 0
     while run_pre:
+        clock.tick(60) #60 fps
     
         c_map = list_levels[level] #select map level
         
@@ -581,6 +671,7 @@ def pre_game():
         
         #DRAWS CURRENT LEVEL ON TOP
         C_level_DRAW(level)
+        Esc_to_Exit()
         #DRAWS TUT ON LEVEL 1
         if level == 0:
             Click_Turtle()
@@ -608,6 +699,7 @@ def pre_game():
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    Go_Back_Sound.play()
                     run_pre = False
                     main_menu()
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -644,7 +736,7 @@ def game():
                 if tile == 2:
                     tile2(x, y, n)
                 if tile == 3:
-                    tile3(x, y)
+                    enemies(x, y)
                 if tile == 8:
                     if tile8(x, y, n) == True:
                         pre_game()
@@ -658,6 +750,7 @@ def game():
             draw_circles_inf(circles_inf, vel_bolas)
             
         C_level_DRAW(level)
+        Esc_to_Exit()
         
         #GAME LOGIC
        
@@ -678,6 +771,7 @@ def game():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     run = False
+                    Go_Back_Sound.play()
                     main_menu()
         
         #makes sures there are no bugs (direct wins, losses)
