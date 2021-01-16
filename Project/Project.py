@@ -46,8 +46,34 @@ Death_Sound = pygame.mixer.Sound("Die Sound Effect.wav")
 Button_Sound = pygame.mixer.Sound("Button.wav")
 Level_Win_Sound = pygame.mixer.Sound("Level Win.wav")
 Escaped_Sound = pygame.mixer.Sound("Escaped.wav")
-Daniel_Sound = pygame.mixer.Sound("Game Music.wav") #thanks Daniel for the music
+Turtle_Inst = pygame.mixer.Sound("Turtle Instrumental.wav") #thanks Diogo Babo for the music
 Go_Back_Sound = pygame.mixer.Sound("Go Back.wav")
+
+#FILES
+try:
+    f1 = open("stats.txt", "r")
+    f1.close()
+except:
+    f1 = open("stats.txt", "w")
+    linhas = ["0\n","0\n","0\n","0\n","0\n","N/A\n"]
+    f1.writelines(linhas)
+    
+    f1.close()
+    
+#open and readlines
+
+def read_stats():
+    f1 = open("stats.txt","r")
+    linhas = f1.readlines()
+    linhas = list(map(lambda x: x.strip(), linhas))
+    f1.close()
+    return linhas
+
+def write_stats(linhas):
+    f1 = open("stats.txt","w")
+    linhas = list(map(lambda x: x + "\n", linhas))
+    f1.writelines(linhas)
+    f1.close()
 
 #TILES
 TILE_SIZE = 20 #(30*30)
@@ -175,7 +201,7 @@ def draw_balls_pregame(list1, list2):
     
 #TILE 8 IS THE GOAL CONTAINS THE WINNING CONDITION
 def tile8(x, y, n):
-    global level 
+    global level
     
     tile8 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE*3, TILE_SIZE*2)
     if turtle_rect.colliderect(tile8) and n > 1:
@@ -205,10 +231,16 @@ def bck(x, y, n):
 
 #LOSING CONDITION
 def lost():
-    global circles_inf, circles_sup, level
+    global circles_inf, circles_sup, level, bullets
     #SET BALLS ON LEVEL 4 TO INICIAL POS
     circles_sup = [(200, 170), (240, 170), (280, 170), (320, 170), (360, 170), (400, 170), (440, 170)]
     circles_inf = [(200, 350), (240, 350), (280, 350), (320, 350), (360, 350), (400, 350), (440, 350)]
+    bullets = []
+    
+    #INCREASE LEVEL DEATH
+    linhas = read_stats()
+    linhas[level] = str(int(linhas[level]) + 1)
+    write_stats(linhas)
     
     #SET LEVEL TO 0
     level = 0
@@ -224,14 +256,16 @@ def lost():
     
     
 def win():
-    global circles_inf, circles_sup, level
+    global circles_inf, circles_sup, level, bullets
     #SET BALLS ON LEVEL 4 TO INICIAL POS
     circles_sup = [(200, 170), (240, 170), (280, 170), (320, 170), (360, 170), (400, 170), (440, 170)]
     circles_inf = [(200, 350), (240, 350), (280, 350), (320, 350), (360, 350), (400, 350), (440, 350)]
+    bullets = []
     
     #SET LEVEL TO 0
     level = 0
     
+    pygame.mixer.Sound.stop(Turtle_Inst)
     Escaped_Sound.play()
      
     screen.fill(Black)
@@ -239,14 +273,21 @@ def win():
      
     #minutes and seconds passed
     t1 = round((time.time() - t0), 2)
-    mn = round(t1 // 60)
+    mn = (round(t1 // 60))
     s = round(t1 - (mn)*60)
     s = str(s) if s > 9 else ('0' + str(s))
     time_passed(mn, s)
     
-    # screen.blit(textWin, textWinRect)# shows victory text
+    #write time stats
+    time_stat = f"{mn}:{s} minutes"
+    linhas = read_stats()
+    linhas[5] = time_stat
+    write_stats(linhas)
+    
+    #Win screen
     pygame.display.update()
     time.sleep(5)
+    Turtle_Inst.play(-1)
     main_menu()
 ##        
 
@@ -385,6 +426,10 @@ circles_sup = [(200, 170), (240, 170), (280, 170), (320, 170), (360, 170), (400,
 circles_inf = [(200, 350), (240, 350), (280, 350), (320, 350), (360, 350), (400, 350), (440, 350)]
 vel_bolas = 1.1
 
+##
+
+#THE FINAL LEVEL HAS TILE 9 ON THE END
+
 map5 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0],
@@ -422,26 +467,18 @@ Probability_of_Fire = 0.03
 Max_Enemy_Bullets = 50
 Bullets_SIZE = (4, 4)
 
-
-#THE FINAL LEVEL HAS TILE 9 ON THE END
+##
 
 
 #LIST OF THE GAME LEVELS
 list_levels = [map1, map2, map3, map4, map5] 
 level = 0 #starting level
-  
+
 #THIS STARTING POS WHERE ACHIEVED BY TRYING AND TESTING BEST RESULTS
              	       #L1         #L2         #L3         #L4         #L5
 levels_start_pos = [(292, 502), (162, 398), (483, 141), (106, 162), (462, 142)]    
 
 ## 
-
-#Victory Text
-font1 = pygame.font.Font('freesansbold.ttf', 32) #font file and size
-textWin = font1.render('Thanks, I am Free!!', True, Golden, None)
-textWinRect = textWin.get_rect()
-textWinRect.center = (300, 270) # Set pos for text
-
 #Victory Text (between levels)
 def vict_btlevels_DRAW(level):
     font1_1 = pygame.font.Font('freesansbold.ttf', 28) #font file and size
@@ -467,40 +504,110 @@ textLostRect.center = (300, 150) # Set pos for text
 
 #Button History Text
 font2_1 = pygame.font.SysFont(None, 40)
-textHistory = font2_1.render('History', True, White, None)
+textHistory = font2_1.render('History', True, Light_Grey, None)
 textHistoryRect = textHistory.get_rect()
 textHistoryRect.center = (300, 430)
 
 #Button Play Text
-font2_1 = pygame.font.SysFont(None, 40)
+# font2_1 = pygame.font.SysFont(None, 40)
 textPlay = font2_1.render('Play', True, White, None)
 textPlayRect = textPlay.get_rect()
-textPlayRect.center = (300, 485) # Set pos for text
+textPlayRect.center = (300, 375) # Set pos for text
 
 #Button Next Text
-font2_1 = pygame.font.SysFont(None, 40)
+# font2_1 = pygame.font.SysFont(None, 40)
 textNext = font2_1.render('Next', True, White, None)
 textNextRect = textNext.get_rect()
 textNextRect.center = (300, 350)
 
+#Button Stats Text
+# font2_1 = pygame.font.SysFont(None, 40)
+textStats = font2_1.render('Stats', True, Light_Grey, None)
+textStatsRect = textStats.get_rect()
+textStatsRect.center = (300, 485)
+
+#Music Text
+font2_2 = pygame.font.SysFont(None, 18)
+textMusic = font2_2.render("Music: The Turtles - 'Happy Together'", True, White, None)
+textMusicRect = textMusic.get_rect()
+textMusicRect.center = (482, 587)    
+
+#Delete Stats Button
+font2_3 = pygame.font.SysFont(None, 26)
+textDelStats = font2_3.render("Reset statistics", True, White, None)
+textDelStatsRect = textDelStats.get_rect()
+textDelStatsRect.center = (510, 580)  
+
+#Delete Stats Warning
+font2_3 = pygame.font.SysFont(None, 26)
+textStatsDeleted = font2_3.render("STATS DELETED", True, White, None)
+textStatsDeletedRect = textStatsDeleted.get_rect()
+textStatsDeletedRect.center = (300, 580)
+
+
+#Show Stats
+def Show_Stats():
+    linhas = read_stats()
+    
+    title_font = pygame.font.SysFont(None, 75)
+    
+    textStats_Title= title_font.render('Statistics', True, Red, None)
+    textStats_TitleRect = textStats_Title.get_rect()
+    textStats_TitleRect.center= (300, 130)
+    
+    font2_1 = pygame.font.SysFont(None, 40)
+    
+    textD_Level1= font2_1.render(f'LEVEL 1: {linhas[0]} deaths', True, Light_Grey, None)
+    textD_Level1Rect = textD_Level1.get_rect()
+    textD_Level1Rect= (100, 200)
+    
+    textD_Level2= font2_1.render(f'LEVEL 2: {linhas[1]} deaths', True, White, None)
+    textD_Level2Rect = textD_Level2.get_rect()
+    textD_Level2Rect= (100, 250)
+    
+    textD_Level3= font2_1.render(f'LEVEL 3: {linhas[2]} deaths', True, Light_Grey, None)
+    textD_Level3Rect = textD_Level3.get_rect()
+    textD_Level3Rect= (100, 300)
+    
+    textD_Level4= font2_1.render(f'LEVEL 4: {linhas[3]} deaths', True, White, None)
+    textD_Level4Rect = textD_Level4.get_rect()
+    textD_Level4Rect = (100, 350)
+    
+    textD_Level5= font2_1.render(f'LEVEL 5: {linhas[4]} deaths', True, Light_Grey, None)
+    textD_Level5Rect = textD_Level5.get_rect()
+    textD_Level5Rect = (100, 400)
+    
+    textBest= font2_1.render(f'BEST TIME: {linhas[5]}', True, White, None)
+    textBestRect = textBest.get_rect()
+    textBestRect = (100, 450)
+    
+    screen.blit(textD_Level1, textD_Level1Rect)
+    screen.blit(textD_Level2, textD_Level2Rect)
+    screen.blit(textD_Level3, textD_Level3Rect)
+    screen.blit(textD_Level4, textD_Level4Rect)
+    screen.blit(textD_Level5, textD_Level5Rect)
+    screen.blit(textBest, textBestRect)
+    screen.blit(textStats_Title, textStats_TitleRect)
+    
+    
 #Current Level
 def C_level_DRAW(level):
-    font2_2 = pygame.font.SysFont(None, 26)
-    textC_level = font2_2.render(f"Level {level + 1}", True, White, None)
+    font2_3 = pygame.font.SysFont(None, 26)
+    textC_level = font2_3.render(f"Level {level + 1}", True, White, None)
     textC_levelRect = textC_level.get_rect()
     textC_levelRect.center = (300, 20)
     screen.blit(textC_level, textC_levelRect)
     
 #Tutorial click turtle
 def Click_Turtle():    
-    font2_3 = pygame.font.SysFont(None, 30)
+    font2_4 = pygame.font.SysFont(None, 30)
     
-    textClick_Turtle = font2_3.render("Click on the turtle", True, White, None)
+    textClick_Turtle = font2_4.render("Click on the turtle", True, White, None)
     textClick_TurtleRect = textClick_Turtle.get_rect()
     textClick_TurtleRect.center = (120, 200)
     screen.blit(textClick_Turtle, textClick_TurtleRect)
         
-    textClick_Turtle = font2_3.render("to begin", True, White, None)
+    textClick_Turtle = font2_4.render("to begin", True, White, None)
     textClick_TurtleRect = textClick_Turtle.get_rect()
     textClick_TurtleRect.center = (120, 230)
     screen.blit(textClick_Turtle, textClick_TurtleRect)
@@ -518,12 +625,14 @@ def Esc_to_Exit():
      textClick_TurtleRect.center = (74, 28)
      screen.blit(textClick_Turtle, textClick_TurtleRect)
 
+# def Stats_text():
+    
 ##
 
 #Menu
 def main_menu():
     global level, t0
-    Daniel_Sound.play(-1)
+    level = 0
     click = False
     while True:
         pygame.mouse.set_visible(True) #we can see the mouse on the menu
@@ -536,6 +645,8 @@ def main_menu():
         screen.blit(Title_Menu, (105, 150))
         screen.blit(textPlay, textPlayRect)
         screen.blit(textHistory, textHistoryRect)
+        screen.blit(textStats, textStatsRect)
+        screen.blit(textMusic, textMusicRect)
  
         #Mouse Pos
         mx, my = pygame.mouse.get_pos()
@@ -544,7 +655,6 @@ def main_menu():
         if textPlayRect.collidepoint((mx, my)):
             if click:
                 t0 = time.time()
-                pygame.mixer.Sound.stop(Daniel_Sound)
                 Button_Sound.play()
                 pre_game()
         
@@ -553,6 +663,12 @@ def main_menu():
             if click:
                 Button_Sound.play()
                 history()
+        
+        #CLICK STATS
+        if textStatsRect.collidepoint((mx, my)):
+            if click:
+                Button_Sound.play()
+                stats()
         
         
         click = False
@@ -581,9 +697,9 @@ def history():
         clock.tick(60) #60 fps
         
         screen.fill(Black)
+        
         Esc_to_Exit()
         screen.blit(history_img, (50,50))
-        
         
         #EVENTS
         for event in pygame.event.get():
@@ -598,6 +714,56 @@ def history():
         
         pygame.display.update()  
 ##
+
+#FIND MORE ABOUT YOUR OWN PROGRESS
+def stats():
+    run = True
+    click = False
+    while run:
+        clock.tick(60) #60 fps
+        
+        screen.fill(Black)
+        
+        Esc_to_Exit()
+        Show_Stats()
+        screen.blit(textDelStats, textDelStatsRect)
+        
+        #Mouse Pos
+        mx, my = pygame.mouse.get_pos()
+        
+        if textDelStatsRect.collidepoint((mx, my)):
+            if click:
+                Button_Sound.play()
+                f1 = open("stats.txt", "w")
+                linhas = ["0\n","0\n","0\n","0\n","0\n","N/A\n"]
+                f1.writelines(linhas)
+    
+                f1.close()
+                
+                screen.blit(textStatsDeleted, textStatsDeletedRect)
+                pygame.display.update()  
+                time.sleep(1)
+                
+                
+        
+        click = False
+        #EVENTS
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    Go_Back_Sound.play()
+                    run = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+                    
+                    
+        pygame.display.update()  
+    
 
 #CALLED BETWEEN LEVELS, USED WITHIN TILE8 FUNC       
 def pause():
@@ -626,8 +792,8 @@ def pause():
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        sys.exit()
+                        Go_Back_Sound.play()
+                        main_menu()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         click = True
@@ -779,8 +945,11 @@ def game():
             n += 1 
 
         pygame.display.update()
-        
+       
+#ACTIONS
+Turtle_Inst.play(-1)
 main_menu()
+
 
 pygame.quit()
 sys.exit()
