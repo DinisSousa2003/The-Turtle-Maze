@@ -237,8 +237,8 @@ def bck(x, y, n):
     bck = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE)
     pygame.draw.rect(screen, Baby_Blue, bck)
     #REMOVE TO TEST GAME WITHOUT DYING
-    # if turtle_rect.colliderect(bck) and n > 1:
-        # lost()
+    if turtle_rect.colliderect(bck) and n > 1:
+        lost()
        
 
 #LOSING CONDITION
