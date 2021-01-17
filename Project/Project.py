@@ -48,6 +48,7 @@ Level_Win_Sound = pygame.mixer.Sound("Level Win.wav")
 Escaped_Sound = pygame.mixer.Sound("Escaped.wav")
 Turtle_Inst = pygame.mixer.Sound("Turtle Instrumental.wav") #thanks Diogo Babo for the music
 Go_Back_Sound = pygame.mixer.Sound("Go Back.wav")
+##
 
 #FILES
 try:
@@ -55,7 +56,7 @@ try:
     f1.close()
 except:
     f1 = open("stats.txt", "w")
-    linhas = ["0\n","0\n","0\n","0\n","0\n","N/A\n"]
+    linhas = ["0\n","0\n","0\n","0\n","0\n","0\n","N/A\n"]
     f1.writelines(linhas)
     
     f1.close()
@@ -69,11 +70,15 @@ def read_stats():
     f1.close()
     return linhas
 
+#open and write linhas on the file
+
 def write_stats(linhas):
     f1 = open("stats.txt","w")
     linhas = list(map(lambda x: x + "\n", linhas))
     f1.writelines(linhas)
     f1.close()
+
+##
 
 #TILES
 TILE_SIZE = 20 #(30*30)
@@ -88,6 +93,13 @@ def tile1(x, y):
 def tile2(x, y, n):
     #one second is there, the other is not
     if int(time.time()) % 2 == 0: 
+        tile1(x, y)
+    else:
+        bck(x, y, n)
+        
+def tile2_1(x, y, n):
+    #one second is there, the other is not
+    if int(time.time()) % 2 == 1: 
         tile1(x, y)
     else:
         bck(x, y, n)
@@ -196,7 +208,7 @@ def draw_balls_pregame(list1, list2):
         x, y = i
         #DRAW THE BALL
         pygame.draw.circle(screen, White, (x, y), Radius)
-    
+##   
     
     
 #TILE 8 IS THE GOAL CONTAINS THE WINNING CONDITION
@@ -225,8 +237,8 @@ def bck(x, y, n):
     bck = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE)
     pygame.draw.rect(screen, Baby_Blue, bck)
     #REMOVE TO TEST GAME WITHOUT DYING
-    if turtle_rect.colliderect(bck) and n > 1:
-        lost()
+    # if turtle_rect.colliderect(bck) and n > 1:
+        # lost()
        
 
 #LOSING CONDITION
@@ -239,7 +251,7 @@ def lost():
     
     #INCREASE LEVEL DEATH
     linhas = read_stats()
-    linhas[level] = str(int(linhas[level]) + 1)
+    linhas[level] = str(int(linhas[level + 1]) + 1)
     write_stats(linhas)
     
     #SET LEVEL TO 0
@@ -281,7 +293,7 @@ def win():
     #write time stats
     time_stat = f"{mn}:{s} minutes"
     linhas = read_stats()
-    linhas[5] = time_stat
+    linhas[6] = time_stat
     write_stats(linhas)
     
     #Win screen
@@ -373,13 +385,13 @@ map3 = [[0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
 [0,	0,	0,	0,	0,	2,	2,	2,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	2,	2,	2,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	2,	2,	2,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	2,	2,	2,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	2,	2,	2,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	2,	2,	2,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	2,	2,	2,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	2,	2,	2,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0],
-[0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	2.1,	2.1,	2.1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	2.1,	2.1,	2.1,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	2.1,	2.1,	2.1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	2.1,	2.1,	2.1,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	0,	0,	0,	0,	2.1,	2.1,	2.1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	2.1,	2.1,	2.1,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0],
+[0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	2,	2,	2,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0],
 [0,	0,	0,	0,	0,	2,	2,	2,	0,	0,	0,	0,	0,	0,	0,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	0,	0,	0,	0],
@@ -553,34 +565,39 @@ def Show_Stats():
     
     textStats_Title= title_font.render('Statistics', True, Red, None)
     textStats_TitleRect = textStats_Title.get_rect()
-    textStats_TitleRect.center= (300, 130)
+    textStats_TitleRect.center= (300, 100)
     
     font2_1 = pygame.font.SysFont(None, 40)
     
-    textD_Level1= font2_1.render(f'LEVEL 1: {linhas[0]} deaths', True, Light_Grey, None)
+    textTentativas= font2_1.render(f'TENTATIVAS: *{linhas[0]}*', True, White, None)
+    textTentativasRect = textTentativas.get_rect()
+    textTentativasRect = (100, 170)
+    
+    textD_Level1= font2_1.render(f'LEVEL 1: {linhas[1]} deaths', True, Light_Grey, None)
     textD_Level1Rect = textD_Level1.get_rect()
-    textD_Level1Rect= (100, 200)
+    textD_Level1Rect= (100, 220)
     
-    textD_Level2= font2_1.render(f'LEVEL 2: {linhas[1]} deaths', True, White, None)
+    textD_Level2= font2_1.render(f'LEVEL 2: {linhas[2]} deaths', True, White, None)
     textD_Level2Rect = textD_Level2.get_rect()
-    textD_Level2Rect= (100, 250)
+    textD_Level2Rect= (100, 270)
     
-    textD_Level3= font2_1.render(f'LEVEL 3: {linhas[2]} deaths', True, Light_Grey, None)
+    textD_Level3= font2_1.render(f'LEVEL 3: {linhas[3]} deaths', True, Light_Grey, None)
     textD_Level3Rect = textD_Level3.get_rect()
-    textD_Level3Rect= (100, 300)
+    textD_Level3Rect= (100, 320)
     
-    textD_Level4= font2_1.render(f'LEVEL 4: {linhas[3]} deaths', True, White, None)
+    textD_Level4= font2_1.render(f'LEVEL 4: {linhas[4]} deaths', True, White, None)
     textD_Level4Rect = textD_Level4.get_rect()
-    textD_Level4Rect = (100, 350)
+    textD_Level4Rect = (100, 370)
     
-    textD_Level5= font2_1.render(f'LEVEL 5: {linhas[4]} deaths', True, Light_Grey, None)
+    textD_Level5= font2_1.render(f'LEVEL 5: {linhas[5]} deaths', True, Light_Grey, None)
     textD_Level5Rect = textD_Level5.get_rect()
-    textD_Level5Rect = (100, 400)
+    textD_Level5Rect = (100, 420)
     
-    textBest= font2_1.render(f'BEST TIME: {linhas[5]}', True, White, None)
+    textBest= font2_1.render(f'BEST TIME: {linhas[6]}', True, White, None)
     textBestRect = textBest.get_rect()
-    textBestRect = (100, 450)
+    textBestRect = (100, 470)
     
+    screen.blit(textTentativas, textTentativasRect)
     screen.blit(textD_Level1, textD_Level1Rect)
     screen.blit(textD_Level2, textD_Level2Rect)
     screen.blit(textD_Level3, textD_Level3Rect)
@@ -624,8 +641,6 @@ def Esc_to_Exit():
      textClick_TurtleRect = textClick_Turtle.get_rect()
      textClick_TurtleRect.center = (74, 28)
      screen.blit(textClick_Turtle, textClick_TurtleRect)
-
-# def Stats_text():
     
 ##
 
@@ -654,6 +669,11 @@ def main_menu():
         #CLICK PLAY
         if textPlayRect.collidepoint((mx, my)):
             if click:
+                linhas = read_stats()
+                linhas[0] = str(int(linhas[0]) + 1)
+                write_stats(linhas)
+                
+                
                 t0 = time.time()
                 Button_Sound.play()
                 pre_game()
@@ -735,7 +755,7 @@ def stats():
             if click:
                 Button_Sound.play()
                 f1 = open("stats.txt", "w")
-                linhas = ["0\n","0\n","0\n","0\n","0\n","N/A\n"]
+                linhas = ["0\n","0\n","0\n","0\n","0\n","0\n","N/A\n"]
                 f1.writelines(linhas)
     
                 f1.close()
@@ -822,6 +842,8 @@ def pre_game():
                         tile1(x, y) 
                     if tile == 2:
                         tile2(x, y, n)
+                    if tile == 2.1:
+                        tile2_1(x, y, n)
                     if tile == 3:
                         tile3(x, y)
                     if tile == 8:
@@ -901,6 +923,8 @@ def game():
                     tile1(x, y) 
                 if tile == 2:
                     tile2(x, y, n)
+                if tile == 2.1:
+                    tile2_1(x, y, n)
                 if tile == 3:
                     enemies(x, y)
                 if tile == 8:
