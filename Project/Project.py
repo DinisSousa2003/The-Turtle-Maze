@@ -39,6 +39,7 @@ flipping_img = pygame.image.load("flipping turtle.jpg").convert()
 history_img = pygame.image.load("History.jpg").convert()
 Title_Menu = pygame.image.load("The_Turtle_Maze.png").convert()
 Free_Turtle_img = pygame.image.load("Free_turtle.jpg").convert()
+Credits_img = pygame.image.load("Credits.jpg").convert()
 ##
 
 #SOUND
@@ -249,9 +250,11 @@ def lost():
     circles_inf = [(200, 350), (240, 350), (280, 350), (320, 350), (360, 350), (400, 350), (440, 350)]
     bullets = []
     
+    print(level)
+    
     #INCREASE LEVEL DEATH
     linhas = read_stats()
-    linhas[level] = str(int(linhas[level + 1]) + 1)
+    linhas[level + 1] = str(int(linhas[level + 1]) + 1)
     write_stats(linhas)
     
     #SET LEVEL TO 0
@@ -294,6 +297,7 @@ def win():
     time_stat = f"{mn}:{s} minutes"
     linhas = read_stats()
     linhas[6] = time_stat
+    linhas[0] = str(int(linhas[0]) + 1)
     write_stats(linhas)
     
     #Win screen
@@ -569,9 +573,9 @@ def Show_Stats():
     
     font2_1 = pygame.font.SysFont(None, 40)
     
-    textTentativas= font2_1.render(f'TENTATIVAS: *{linhas[0]}*', True, White, None)
-    textTentativasRect = textTentativas.get_rect()
-    textTentativasRect = (100, 170)
+    textWins= font2_1.render(f'WIN: *{linhas[0]}*', True, White, None)
+    textWinsRect = textWins.get_rect()
+    textWinsRect = (100, 170)
     
     textD_Level1= font2_1.render(f'LEVEL 1: {linhas[1]} deaths', True, Light_Grey, None)
     textD_Level1Rect = textD_Level1.get_rect()
@@ -597,7 +601,7 @@ def Show_Stats():
     textBestRect = textBest.get_rect()
     textBestRect = (100, 470)
     
-    screen.blit(textTentativas, textTentativasRect)
+    screen.blit(textWins, textWinsRect)
     screen.blit(textD_Level1, textD_Level1Rect)
     screen.blit(textD_Level2, textD_Level2Rect)
     screen.blit(textD_Level3, textD_Level3Rect)
@@ -657,7 +661,8 @@ def main_menu():
         screen.fill(Black)
         
         #DRAW TEXT MENU AND BUTTONS
-        screen.blit(Title_Menu, (105, 150))
+        screen.blit(Title_Menu, (90, 10))
+        screen.blit(Credits_img, (5, 550))
         screen.blit(textPlay, textPlayRect)
         screen.blit(textHistory, textHistoryRect)
         screen.blit(textStats, textStatsRect)
@@ -669,11 +674,6 @@ def main_menu():
         #CLICK PLAY
         if textPlayRect.collidepoint((mx, my)):
             if click:
-                linhas = read_stats()
-                linhas[0] = str(int(linhas[0]) + 1)
-                write_stats(linhas)
-                
-                
                 t0 = time.time()
                 Button_Sound.play()
                 pre_game()
@@ -718,8 +718,8 @@ def history():
         
         screen.fill(Black)
         
+        screen.blit(history_img, (0, -20))
         Esc_to_Exit()
-        screen.blit(history_img, (50,50))
         
         #EVENTS
         for event in pygame.event.get():
