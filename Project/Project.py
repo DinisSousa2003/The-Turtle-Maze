@@ -250,8 +250,6 @@ def lost():
     circles_inf = [(200, 350), (240, 350), (280, 350), (320, 350), (360, 350), (400, 350), (440, 350)]
     bullets = []
     
-    print(level)
-    
     #INCREASE LEVEL DEATH
     linhas = read_stats()
     linhas[level + 1] = str(int(linhas[level + 1]) + 1)
@@ -262,7 +260,7 @@ def lost():
     
     #SET LOSING SCREEN AND BACK TO MENU
     Death_Sound.play()
-    screen.fill(Baby_Blue)
+    screen.fill(Black)
     screen.blit(textLost, textLostRect)
     screen.blit(flipping_img, (100, 230))
     pygame.display.update()
@@ -296,8 +294,18 @@ def win():
     #write time stats
     time_stat = f"{mn}:{s} minutes"
     linhas = read_stats()
-    linhas[6] = time_stat
-    linhas[0] = str(int(linhas[0]) + 1)
+    
+    #INCREASE WINS
+    linhas[0] = str(int(linhas[0]) + 1) 
+    
+    #ONLY WRITE IF BEST
+    if linhas[6] == "N/A":
+        linhas[6] = time_stat
+    elif int(mn) < int(linhas[6][0:-11]): #[0:-11] are the minutes
+        linhas[6] = time_stat
+    elif int(mn) == int(linhas[6][0:-11]) and int(s) < int(linhas[6][-10:-8]): #[-10:-8] are the seconds
+        linhas[6] = time_stat
+        
     write_stats(linhas)
     
     #Win screen
@@ -514,7 +522,7 @@ def time_passed(minutes, seconds):
 
 #Losing Text
 font1 = pygame.font.Font('freesansbold.ttf', 28) #font file and size
-textLost = font1.render("Thanks a lot... I'm back in the dungeon :(", True, Red, None)
+textLost = font1.render("Thanks a lot... I'm back in the dungeon :(", True, Baby_Blue, None)
 textLostRect = textLost.get_rect()
 textLostRect.center = (300, 150) # Set pos for text
 
@@ -977,3 +985,4 @@ main_menu()
 
 pygame.quit()
 sys.exit()
+
