@@ -47,7 +47,7 @@ Death_Sound = pygame.mixer.Sound("Die Sound Effect.wav")
 Button_Sound = pygame.mixer.Sound("Button.wav")
 Level_Win_Sound = pygame.mixer.Sound("Level Win.wav")
 Escaped_Sound = pygame.mixer.Sound("Escaped.wav")
-Turtle_Inst = pygame.mixer.Sound("Turtle Instrumental.wav") #thanks Diogo Babo for the music
+Turtle_Inst = pygame.mixer.music.load("Turtle Instrumental.mp3") #thanks Diogo Babo for the music
 Go_Back_Sound = pygame.mixer.Sound("Go Back.wav")
 ##
 
@@ -239,7 +239,7 @@ def bck(x, y, n):
     pygame.draw.rect(screen, Baby_Blue, bck)
     #REMOVE TO TEST GAME WITHOUT DYING
     if turtle_rect.colliderect(bck) and n > 1:
-        lost()
+       lost()
        
 
 #LOSING CONDITION
@@ -278,7 +278,7 @@ def win():
     #SET LEVEL TO 0
     level = 0
     
-    pygame.mixer.Sound.stop(Turtle_Inst)
+    pygame.mixer.music.stop()
     Escaped_Sound.play()
      
     screen.fill(Black)
@@ -311,7 +311,7 @@ def win():
     #Win screen
     pygame.display.update()
     time.sleep(5)
-    Turtle_Inst.play(-1)
+    pygame.mixer.music.play(-1, 0.0)
     main_menu()
 ##        
 
@@ -979,10 +979,9 @@ def game():
         pygame.display.update()
        
 #ACTIONS
-Turtle_Inst.play(-1)
+pygame.mixer.music.play(-1, 0.0)
 main_menu()
 
 
 pygame.quit()
 sys.exit()
-
