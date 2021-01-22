@@ -40,6 +40,11 @@ history_img = pygame.image.load("History.jpg").convert()
 Title_Menu = pygame.image.load("The_Turtle_Maze.png").convert()
 Free_Turtle_img = pygame.image.load("Free_turtle.jpg").convert()
 Credits_img = pygame.image.load("Credits.jpg").convert()
+Bck_img = pygame.image.load("bck.jpg").convert()
+tile1_img = pygame.image.load("tile1.jpg").convert()
+tile3_img = pygame.image.load("tile3.jpg").convert()
+tile8_img = pygame.image.load("tile8.jpg").convert()
+tile9_img = pygame.image.load("tile9.jpg").convert()
 ##
 
 #SOUND
@@ -86,8 +91,7 @@ TILE_SIZE = 20 #(30*30)
 
 #THE PATH OF THE GAME
 def tile1(x, y):
-    tile1 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE)
-    pygame.draw.rect(screen, Black, tile1)
+    screen.blit(tile1_img, (x*TILE_SIZE, y*TILE_SIZE))
     
     
 #TILES THAT APPEAT AND DISAPPEAR
@@ -108,19 +112,14 @@ def tile2_1(x, y, n):
 #ENEMY PRE GAME
 def tile3(x,y):
     #ENEMY
-    tile3 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE*3, TILE_SIZE*3)
-    pygame.draw.rect(screen, Red, tile3) 
+    screen.blit(tile3_img, (x*TILE_SIZE, y*TILE_SIZE))
     
 #ENEMY GAME    
 def enemies(x, y):
-    #ENEMY
-    tile3 = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE*3, TILE_SIZE*3)
-    pygame.draw.rect(screen, Red, tile3)
-    
     #FIRE
     fireChance = random.random() #number 0-1
     if fireChance < Probability_of_Fire and len(bullets) <= Max_Enemy_Bullets:
-        bullets.append(pygame.Rect((x*TILE_SIZE + 1.5 * TILE_SIZE, y*TILE_SIZE + Bullets_SIZE[1]), Bullets_SIZE))
+        bullets.append(pygame.Rect((x*TILE_SIZE + 1.5 * TILE_SIZE - 2, y*TILE_SIZE + Bullets_SIZE[1] - 6), Bullets_SIZE))
     
     #BULLET CONTROL
     for b in bullets:
@@ -138,7 +137,9 @@ def enemies(x, y):
         
         #Draw Bullets
         pygame.draw.rect(screen, White, b)
-        
+    
+    #ENEMY
+    screen.blit(tile3_img, (x*TILE_SIZE, y*TILE_SIZE))
 
 #BOLAS QUE MATAM A TESS (NÍVEL 4)
 #BOLAS SUP
@@ -223,7 +224,7 @@ def tile8(x, y, n):
         cont = pause()
         return cont
     else:
-        pygame.draw.rect(screen, Green, tile8) #goal is Green by 
+        screen.blit(tile8_img, (x*TILE_SIZE, y*TILE_SIZE)) #goal is Green by 
 
 #TILE 9 IS THE GOAL FOR THE LAST LEVEL
 def tile9(x, y, n):
@@ -231,15 +232,15 @@ def tile9(x, y, n):
     if turtle_rect.colliderect(tile9) and n > 1:
            win()
     else:
-        pygame.draw.rect(screen, Green, tile9) #goal is Green by default
+        screen.blit(tile9_img, (x*TILE_SIZE, y*TILE_SIZE)) #goal is Green by default
 
 #THE BCK (TILE 0) CONTAINS THE LOSING CONDITION
 def bck(x, y, n):
     bck = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE)
-    pygame.draw.rect(screen, Baby_Blue, bck)
+    screen.blit(Bck_img, (x*TILE_SIZE, y*TILE_SIZE))
     #REMOVE TO TEST GAME WITHOUT DYING
     if turtle_rect.colliderect(bck) and n > 1:
-       lost()
+        lost()
        
 
 #LOSING CONDITION
