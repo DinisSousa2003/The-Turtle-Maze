@@ -6,4 +6,4 @@ Tess, the Turtle, will have to go trough several rooms, escape trapdoors, moving
 
 Do you got what it takes to save her?
 
-<p> ola <p>
+<img src="C:\Users\User\Documents\1ºAno 1ºSemestre\FPRO\#PROJETO\Not final stuff\Menu_photo.png" alt="Foto do menu" width="500">
