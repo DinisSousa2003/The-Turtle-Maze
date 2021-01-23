@@ -19,8 +19,11 @@ If you fail, you have to do it all over, so you have to do the best you can.
 
 Do you got what it takes to save her?
 
-All the levels where design by me, as well as menu's and the tiles on game. (except for backgroung bricks, although i altered them)
+All the levels where design by me, as well as menu's and the tiles on game. (except for backgroung bricks, although I altered them)
+
 Game logo made by Kwanza.
+
+P.S.: The Turtle Slayer, despite evil, has excellent music taste, as everywhere in the dungeon you can here the instrumental of the music 'Happy Together' by The Turtles. Very adequate for a Turtle Slayer I would say.
 
 
 ### UI
