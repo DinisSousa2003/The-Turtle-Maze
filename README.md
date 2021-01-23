@@ -19,8 +19,9 @@ If you fail, you have to do it all over, so you have to do the best you can.
 
 Do you got what it takes to save her?
 
-All the levels where design by me, as well as menu's and the tiles on game.
+All the levels where design by me, as well as menu's and the tiles on game. (except for backgroung bricks, although i altered them)
 Game logo made by Kwanza.
+
 
 ### UI
 
