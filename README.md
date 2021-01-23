@@ -9,7 +9,7 @@ Do you got what it takes to save her?
 
 
 
-<p align="center">
+<p align="center"; padding="20px">
   <b> THE MENU </b> 
 </p>
   
