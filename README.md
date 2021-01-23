@@ -6,10 +6,10 @@ Tess, the Turtle, will have to go trough several rooms, escape trapdoors, moving
 
 Do you got what it takes to save her?
 
+<br><br>
 
 
-
-<p align="center"; padding="20px">
+<p align="center">
   <b> THE MENU </b> 
 </p>
   
