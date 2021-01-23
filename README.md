@@ -5,10 +5,10 @@
 
 ### Objective
 Maze type game with mouse movement
-Inspired by:
-The Turtle Slayer itself <br>
-https://www.agame.com/game/scary-maze
-https://www.agame.com/game/maze
+Inspired by: <br>
+- The Turtle Slayer <br>
+- https://www.agame.com/game/scary-maze <br>
+- https://www.agame.com/game/maze
 
 
 ### Description
@@ -24,7 +24,7 @@ Game logo made by Kwanza.
 
 ### UI
 
-<br><br>
+<br>
 
 
 <p align="center">
