@@ -22,6 +22,8 @@ Do you got what it takes to save her?
   <b> LEVEL TWO (an level example) </b> 
 </p>
 
+<br><br>
+
 <p align="center">
-  <img src="">
+  <img src="https://user-images.githubusercontent.com/70693990/105606250-23aac500-5d90-11eb-9799-5fcab36c7baf.PNG">
 </p>
