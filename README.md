@@ -6,7 +6,7 @@
 ### Objective
 Maze type game with mouse movement
 Inspired by:
-The Turtle Slayer itself
+The Turtle Slayer itself <br>
 https://www.agame.com/game/scary-maze
 https://www.agame.com/game/maze
 
