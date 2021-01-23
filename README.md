@@ -6,7 +6,7 @@
 ### Objective
 Maze type game with mouse movement
 Inspired by:
-
+The Turtle Slayer itself
 https://www.agame.com/game/scary-maze
 https://www.agame.com/game/maze
 
@@ -14,15 +14,12 @@ https://www.agame.com/game/maze
 ### Description
 
 This is the story of a turtle escaping the terrible turtle slayer dungeon.
-
 Tess, the Turtle, will have to go trough several rooms, escape trapdoors, moving balls and even the slayers tank's while trying to escape.
-
 If you fail, you have to do it all over, so you have to do the best you can.
 
 Do you got what it takes to save her?
 
 All the levels where design by me, as well as menu's and the tiles on game.
-
 Game logo made by Kwanza.
 
 ### UI
