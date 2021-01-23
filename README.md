@@ -1,10 +1,24 @@
 # The Turtle Maze
+## FPRO/MIEIC, 2020/21
+## Dinis Sousa (up202006303)
+## 1MIEIC04
+
+### Objetivo
+Maze type game with mouse movement
+Inspired by:
+https://www.agame.com/game/scary-maze
+https://www.agame.com/game/maze
+
+
+### Description
 
 This is the story of a turtle escaping the terrible turtle slayer dungeon.
 
 Tess, the Turtle, will have to go trough several rooms, escape trapdoors, moving balls and even the slayers tank's while trying to escape.
 
 Do you got what it takes to save her?
+
+### UI
 
 <br><br>
 
@@ -27,3 +41,17 @@ Do you got what it takes to save her?
 <p align="center">
   <img src="https://user-images.githubusercontent.com/70693990/105606250-23aac500-5d90-11eb-9799-5fcab36c7baf.PNG">
 </p>
+
+### Packages
+
+- Pygame
+
+### Tasks
+1. Load the stats or create a file if there is not one yet
+2. Draw the levels, reading the matrices that are correspondent
+3. Read mouse position and draw the turtle in it's pos
+3. Check for collision with the outer tiles (death) or with the green one (win/next level)
+4. If the game is completed, the time will appear on screen and will be saved on the statistics
+4. If dead, it will be saved as a defeat and will register the level where that happaned
+5. Play, enjoy and try to escpape
+5
