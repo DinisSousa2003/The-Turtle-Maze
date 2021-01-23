@@ -41,6 +41,7 @@ Title_Menu = pygame.image.load("The_Turtle_Maze.png").convert()
 Free_Turtle_img = pygame.image.load("Free_turtle.jpg").convert()
 Credits_img = pygame.image.load("Credits.jpg").convert()
 Bck_img = pygame.image.load("bck.jpg").convert()
+Statistics_img = pygame.image.load("Statistics.jpg").convert()
 tile1_img = pygame.image.load("tile1.jpg").convert()
 tile3_img = pygame.image.load("tile3.jpg").convert()
 tile8_img = pygame.image.load("tile8.jpg").convert()
@@ -574,12 +575,6 @@ textStatsDeletedRect.center = (300, 580)
 def Show_Stats():
     linhas = read_stats()
     
-    title_font = pygame.font.SysFont(None, 75)
-    
-    textStats_Title= title_font.render('Statistics', True, Red, None)
-    textStats_TitleRect = textStats_Title.get_rect()
-    textStats_TitleRect.center= (300, 100)
-    
     font2_1 = pygame.font.SysFont(None, 40)
     
     textWins= font2_1.render(f'WIN: *{linhas[0]}*', True, White, None)
@@ -617,7 +612,7 @@ def Show_Stats():
     screen.blit(textD_Level4, textD_Level4Rect)
     screen.blit(textD_Level5, textD_Level5Rect)
     screen.blit(textBest, textBestRect)
-    screen.blit(textStats_Title, textStats_TitleRect)
+    screen.blit(Statistics_img, (150, 30))
     
     
 #Current Level
