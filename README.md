@@ -63,3 +63,5 @@ P.S.: The Turtle Slayer, despite evil, has excellent music taste, as everywhere 
 4. If the game is completed, the time will appear on screen and will be saved on the statistics
 4. If dead, it will be saved as a defeat and will register the level where that happaned
 5. Play, enjoy and try to escpape
+
+!THE IMAGES, SOUNDS AND MUSIC USED HAVE TO BE IN THE SAME FOLDER!
