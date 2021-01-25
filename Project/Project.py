@@ -31,30 +31,30 @@ pygame.display.set_caption("THE TURTLE MAZE")
 ##
 
 #IMAGES
-turtle_img = pygame.image.load("Turtle.jpg").convert() #turtle
+turtle_img = pygame.image.load("Images/Turtle.jpg").convert() #turtle
 #Player rect to implement collisions; arbitrary coordinates
 turtle_rect = pygame.Rect(0, 0, turtle_img.get_width(), turtle_img.get_height())
 
-flipping_img = pygame.image.load("flipping turtle.jpg").convert()
-history_img = pygame.image.load("History.jpg").convert()
-Title_Menu = pygame.image.load("The_Turtle_Maze.png").convert()
-Free_Turtle_img = pygame.image.load("Free_turtle.jpg").convert()
-Credits_img = pygame.image.load("Credits.jpg").convert()
-Bck_img = pygame.image.load("bck.jpg").convert()
-Statistics_img = pygame.image.load("Statistics.jpg").convert()
-tile1_img = pygame.image.load("tile1.jpg").convert()
-tile3_img = pygame.image.load("tile3.jpg").convert()
-tile8_img = pygame.image.load("tile8.jpg").convert()
-tile9_img = pygame.image.load("tile9.jpg").convert()
+flipping_img = pygame.image.load("Images/flipping turtle.jpg").convert()
+history_img = pygame.image.load("Images/History.jpg").convert()
+Title_Menu = pygame.image.load("Images/The_Turtle_Maze.png").convert()
+Free_Turtle_img = pygame.image.load("Images/Free_turtle.jpg").convert()
+Credits_img = pygame.image.load("Images/Credits.jpg").convert()
+Bck_img = pygame.image.load("Images/bck.jpg").convert()
+Statistics_img = pygame.image.load("Images/Statistics.jpg").convert()
+tile1_img = pygame.image.load("Images/tile1.jpg").convert()
+tile3_img = pygame.image.load("Images/tile3.jpg").convert()
+tile8_img = pygame.image.load("Images/tile8.jpg").convert()
+tile9_img = pygame.image.load("Images/tile9.jpg").convert()
 ##
 
 #SOUND
-Death_Sound = pygame.mixer.Sound("Die Sound Effect.wav")
-Button_Sound = pygame.mixer.Sound("Button.wav")
-Level_Win_Sound = pygame.mixer.Sound("Level Win.wav")
-Escaped_Sound = pygame.mixer.Sound("Escaped.wav")
-Turtle_Inst = pygame.mixer.music.load("Turtle Instrumental.mp3") #thanks Diogo Babo for the music
-Go_Back_Sound = pygame.mixer.Sound("Go Back.wav")
+Death_Sound = pygame.mixer.Sound("Sound and Music/Die Sound Effect.wav")
+Button_Sound = pygame.mixer.Sound("Sound and Music/Button.wav")
+Level_Win_Sound = pygame.mixer.Sound("Sound and Music/Level Win.wav")
+Escaped_Sound = pygame.mixer.Sound("Sound and Music/Escaped.wav")
+Turtle_Inst = pygame.mixer.music.load("Sound and Music/Turtle Instrumental.mp3") #thanks Diogo Babo for the music
+Go_Back_Sound = pygame.mixer.Sound("Sound and Music/Go Back.wav")
 ##
 
 #FILES
