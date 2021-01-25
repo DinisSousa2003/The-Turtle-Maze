@@ -241,7 +241,7 @@ def bck(x, y, n):
     screen.blit(Bck_img, (x*TILE_SIZE, y*TILE_SIZE))
     #REMOVE TO TEST GAME WITHOUT DYING
     if turtle_rect.colliderect(bck) and n > 1:
-        lost()
+          lost()
        
 
 #LOSING CONDITION
@@ -529,28 +529,22 @@ textLostRect = textLost.get_rect()
 textLostRect.center = (300, 150) # Set pos for text
 
 #Button History Text
-font2_1 = pygame.font.SysFont(None, 40)
+font2_1 = pygame.font.Font("Fonts/DEATHBLOOD.ttf", 28) ##being altered
 textHistory = font2_1.render('History', True, Light_Grey, None)
 textHistoryRect = textHistory.get_rect()
-textHistoryRect.center = (300, 430)
+textHistoryRect.center = (300, 445)
 
 #Button Play Text
 # font2_1 = pygame.font.SysFont(None, 40)
 textPlay = font2_1.render('Play', True, White, None)
 textPlayRect = textPlay.get_rect()
-textPlayRect.center = (300, 375) # Set pos for text
-
-#Button Next Text
-# font2_1 = pygame.font.SysFont(None, 40)
-textNext = font2_1.render('Next', True, White, None)
-textNextRect = textNext.get_rect()
-textNextRect.center = (300, 350)
+textPlayRect.center = (300, 385) # Set pos for text
 
 #Button Stats Text
 # font2_1 = pygame.font.SysFont(None, 40)
 textStats = font2_1.render('Stats', True, Light_Grey, None)
 textStatsRect = textStats.get_rect()
-textStatsRect.center = (300, 485)
+textStatsRect.center = (300, 505)
 
 #Music Text
 font2_2 = pygame.font.SysFont(None, 18)
@@ -569,6 +563,13 @@ font2_3 = pygame.font.SysFont(None, 26)
 textStatsDeleted = font2_3.render("STATS DELETED", True, White, None)
 textStatsDeletedRect = textStatsDeleted.get_rect()
 textStatsDeletedRect.center = (300, 580)
+
+#Button Next Text
+font2_4 = pygame.font.SysFont(None, 40)
+textNext = font2_4.render('Next', True, White, None)
+textNextRect = textNext.get_rect()
+textNextRect.center = (300, 350)
+
 
 
 #Show Stats
@@ -981,3 +982,4 @@ main_menu()
 
 pygame.quit()
 sys.exit()
+
