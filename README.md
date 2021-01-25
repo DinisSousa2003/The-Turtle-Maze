@@ -38,7 +38,7 @@ P.S.: The Turtle Slayer, despite evil, has excellent music taste, as everywhere 
   
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/70693990/105606020-c8c49e00-5d8e-11eb-83a1-447ea4727b30.PNG">
+  <img src="https://user-images.githubusercontent.com/70693990/105751789-64e0d780-5f3e-11eb-98f6-a9af7952caa3.PNG">
 </p>
 
 <br><br>
