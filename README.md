@@ -14,7 +14,7 @@ Inspired by: <br>
 ### Description
 
 This is the story of a turtle escaping the terrible turtle slayer dungeon.
-Tess, the Turtle, will have to go trough several rooms, escaping moving balls, an 
+Tess, the Turtle, will have to go through several rooms, escaping moving balls, an 
 intermittent floor and even the slayers tank's while trying to escape.
 If you fail, you have to do it all over, so you have to do the best you can.
 
