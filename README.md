@@ -22,7 +22,7 @@ Do you got what it takes to save her?
 
 All the levels where design by me, as well as menu's and the tiles on game. (except for backgroung bricks, although I altered them)
 
-Game logo made by Kwanza.
+Game logo made by Kwanza (Zé Miguel MIEIC06).
 
 P.S.: The Turtle Slayer, despite evil, has excellent music taste, as everywhere in the dungeon you can here the instrumental of the music 'Happy Together' by The Turtles. Very adequate for a Turtle Slayer I would say.
 
