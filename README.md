@@ -64,4 +64,3 @@ P.S.: The Turtle Slayer, despite evil, has excellent music taste, as everywhere 
 4. If dead, it will be saved as a defeat and will register the level where that happaned
 5. Play, enjoy and try to escpape
 
-ATTENTION: the images, sounds and music must be in the same directory as the Project.py file
